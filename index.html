@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tire Belediyesi App Önizleme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: #2E5266;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: -20px -20px 20px -20px;
+            border-radius: 20px 20px 0 0;
+        }
+        .menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .menu-item {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            background: #e9ecef;
+        }
+        .icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .status {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Tire Belediyesi</h1>
+            <p>Mobil Uygulama Önizlemesi</p>
+        </div>
+        
+        <div class="status">
+            <strong>✅ React Native Uygulaması Hazır!</strong><br>
+            <small>Tüm ekranlar kodlandı ve Supabase bağlantısı yapıldı</small>
+        </div>
+        
+        <div class="menu">
+            <div class="menu-item">
+                <div class="icon">📅</div>
+                <strong>Etkinlikler</strong><br>
+                <small>Şehir etkinlikleri</small>
+            </div>
+            <div class="menu-item">
+                <div class="icon">🚨</div>
+                <strong>Acil Durum</strong><br>
+                <small>Acil iletişim</small>
+            </div>
+            <div class="menu-item">
+                <div class="icon">💊</div>
+                <strong>Nöbetçi Eczane</strong><br>
+                <small>24 saat hizmet</small>
+            </div>
+            <div class="menu-item">
+                <div class="icon">🏛️</div>
+                <strong>Belediye</strong><br>
+                <small>Hizmetler</small>
+            </div>
+            <div class="menu-item">
+                <div class="icon">🏖️</div>
+                <strong>Turizm</strong><br>
+                <small>Gezilecek yerler</small>
+            </div>
+            <div class="menu-item">
+                <div class="icon">📞</div>
+                <strong>İletişim</strong><br>
+                <small>Bize ulaşın</small>
+            </div>
+        </div>
+        
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-top: 20px;">
+            <h3>📱 Gerçek Teste Geçmek İçin:</h3>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><strong>Expo Go:</strong> Telefona indir, QR kod tara</li>
+                <li><strong>Android Studio:</strong> Emülatör kur</li>
+                <li><strong>BlueStacks:</strong> Android emülatör</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
