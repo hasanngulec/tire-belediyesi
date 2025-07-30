@@ -14,7 +14,7 @@ module.exports = {
       directory: path.join(__dirname, 'dist'),
     },
     compress: true,
-    port: 3000,
+    port: 3001,
     open: true,
     hot: true
   },
@@ -22,11 +22,12 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(react-native-vector-icons|@react-navigation)\/).*/,
         use: {
           loader: 'babel-loader',
           options: {
-            configFile: './babel.config.js'
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-runtime']
           }
         }
       },
