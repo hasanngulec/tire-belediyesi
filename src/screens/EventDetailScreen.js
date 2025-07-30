@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../styles/colors';
 import { commonStyles } from '../styles/commonStyles';
 
-const EventDetailScreen = ({ route }) => {
+const EventDetailScreen = ({ route, navigation }) => {
   const { event } = route.params;
 
   const formatDate = (dateString) => {
@@ -13,93 +13,120 @@ const EventDetailScreen = ({ route }) => {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
-      weekday: 'long',
     });
   };
 
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('tr-TR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const openPhone = (phoneNumber) => {
+    if (phoneNumber) {
+      Linking.openURL(`tel:${phoneNumber}`);
+    }
+  };
+
+  const openTicketLink = (ticketLink) => {
+    if (ticketLink) {
+      Linking.openURL(ticketLink);
+    }
+  };
+
+  const openMaps = () => {
+    if (event.enlem && event.boylam) {
+      const url = `https://www.google.com/maps?q=${event.enlem},${event.boylam}`;
+      Linking.openURL(url);
+    }
   };
 
   return (
     <View style={commonStyles.container}>
       <ScrollView style={styles.content}>
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Icon name="arrow-back" size={24} color={colors.white} />
+          </TouchableOpacity>
+          
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>{event.ad}</Text>
+            <Text style={styles.headerSubtitle}>
+              {formatDate(event.tarih)}
+            </Text>
+          </View>
+        </View>
+
         <View style={styles.imageContainer}>
-          {event.image_url ? (
-            <Image source={{ uri: event.image_url }} style={styles.eventImage} />
+          {event.fotograf ? (
+            <Image source={{ uri: event.fotograf }} style={styles.eventImage} />
           ) : (
-            <View style={styles.eventImagePlaceholder}>
-              <Icon name="event" size={80} color={colors.primary} />
+            <View style={styles.imagePlaceholder}>
+              <Icon name="event" size={64} color={colors.primary} />
             </View>
           )}
         </View>
 
-        <View style={styles.contentContainer}>
-          <Text style={styles.title}>{event.title}</Text>
-          
-          <View style={styles.detailSection}>
-            <View style={styles.detailRow}>
-              <Icon name="access-time" size={24} color={colors.primary} />
-              <View style={styles.detailText}>
-                <Text style={styles.detailLabel}>Tarih ve Saat</Text>
-                <Text style={styles.detailValue}>
-                  {formatDate(event.event_date)}
-                </Text>
-                {event.event_time && (
-                  <Text style={styles.detailValue}>
-                    {formatTime(event.event_time)}
-                  </Text>
-                )}
-              </View>
-            </View>
+        <View style={styles.detailsContainer}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>📋 Etkinlik Detayları</Text>
+            <Text style={styles.description}>{event.aciklama}</Text>
+          </View>
 
-            <View style={styles.detailRow}>
-              <Icon name="place" size={24} color={colors.primary} />
-              <View style={styles.detailText}>
-                <Text style={styles.detailLabel}>Konum</Text>
-                <Text style={styles.detailValue}>{event.location}</Text>
-              </View>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>📍 Konum</Text>
+            <View style={styles.locationInfo}>
+              <Icon name="location-on" size={20} color={colors.primary} />
+              <Text style={styles.locationText}>{event.adres}</Text>
             </View>
-
-            {event.organizer && (
-              <View style={styles.detailRow}>
-                <Icon name="group" size={24} color={colors.primary} />
-                <View style={styles.detailText}>
-                  <Text style={styles.detailLabel}>Düzenleyen</Text>
-                  <Text style={styles.detailValue}>{event.organizer}</Text>
-                </View>
-              </View>
+            
+            {(event.enlem && event.boylam) && (
+              <TouchableOpacity style={styles.mapButton} onPress={openMaps}>
+                <Icon name="map" size={16} color={colors.white} />
+                <Text style={styles.mapButtonText}>Haritada Göster</Text>
+              </TouchableOpacity>
             )}
           </View>
 
-          <View style={styles.descriptionSection}>
-            <Text style={styles.sectionTitle}>Etkinlik Detayları</Text>
-            <Text style={styles.description}>
-              {event.description || 'Bu etkinlik hakkında detaylı bilgi yakında paylaşılacaktır.'}
-            </Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>📅 Tarih ve Saat</Text>
+            <View style={styles.dateInfo}>
+              <Icon name="event" size={20} color={colors.primary} />
+              <Text style={styles.dateText}>{formatDate(event.tarih)}</Text>
+            </View>
           </View>
 
-          {event.requirements && (
-            <View style={styles.requirementsSection}>
-              <Text style={styles.sectionTitle}>Katılım Koşulları</Text>
-              <Text style={styles.description}>{event.requirements}</Text>
+          {event.telefon_numarasi && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>📞 İletişim</Text>
+              <TouchableOpacity 
+                style={styles.phoneButton}
+                onPress={() => openPhone(event.telefon_numarasi)}
+              >
+                <Icon name="phone" size={16} color={colors.white} />
+                <Text style={styles.phoneButtonText}>{event.telefon_numarasi}</Text>
+              </TouchableOpacity>
             </View>
           )}
 
-          <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.primaryButton}>
-              <Icon name="calendar-today" size={20} color={colors.white} />
-              <Text style={styles.primaryButtonText}>Takvime Ekle</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.secondaryButton}>
-              <Icon name="share" size={20} color={colors.primary} />
-              <Text style={styles.secondaryButtonText}>Paylaş</Text>
-            </TouchableOpacity>
+          {event.bilet_linki && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>🎫 Bilet</Text>
+              <TouchableOpacity 
+                style={styles.ticketButton}
+                onPress={() => openTicketLink(event.bilet_linki)}
+              >
+                <Icon name="confirmation-number" size={16} color={colors.white} />
+                <Text style={styles.ticketButtonText}>Bilet Al</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>💡 Etkinlik İpuçları</Text>
+            <View style={styles.tipsList}>
+              <Text style={styles.tipText}>• Etkinlik saatinden 15 dakika önce gelin</Text>
+              <Text style={styles.tipText}>• Yanınızda kimlik bulundurun</Text>
+              <Text style={styles.tipText}>• Fotoğraf çekmek için izin alın</Text>
+              <Text style={styles.tipText}>• Etkinlik kurallarına uyun</Text>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -111,6 +138,31 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  header: {
+    backgroundColor: colors.primary,
+    paddingTop: 50,
+    paddingBottom: 20,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 16,
+  },
+  headerContent: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.white,
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: colors.white,
+    opacity: 0.9,
+  },
   imageContainer: {
     height: 200,
     backgroundColor: colors.background,
@@ -118,72 +170,45 @@ const styles = StyleSheet.create({
   eventImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
-  eventImagePlaceholder: {
+  imagePlaceholder: {
     width: '100%',
     height: '100%',
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.lightGray,
   },
-  contentContainer: {
-    padding: 20,
+  detailsContainer: {
+    padding: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text.primary,
-    marginBottom: 20,
-  },
-  detailSection: {
-    marginBottom: 24,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  detailText: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    marginBottom: 2,
-  },
-  detailValue: {
-    fontSize: 16,
-    color: colors.text.primary,
-    fontWeight: '500',
-  },
-  descriptionSection: {
-    marginBottom: 24,
-  },
-  requirementsSection: {
+  section: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   description: {
     fontSize: 16,
     color: colors.text.secondary,
     lineHeight: 24,
   },
-  actionButtons: {
+  locationInfo: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  primaryButton: {
+  locationText: {
+    fontSize: 16,
+    color: colors.text.primary,
+    marginLeft: 8,
     flex: 1,
+  },
+  mapButton: {
     backgroundColor: colors.primary,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
     flexDirection: 'row',
@@ -191,28 +216,57 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
   },
-  primaryButtonText: {
+  mapButtonText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
   },
-  secondaryButton: {
-    flex: 1,
-    backgroundColor: colors.white,
-    paddingVertical: 12,
+  dateInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dateText: {
+    fontSize: 16,
+    color: colors.text.primary,
+    marginLeft: 8,
+  },
+  phoneButton: {
+    backgroundColor: colors.success,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
   },
-  secondaryButtonText: {
-    color: colors.primary,
-    fontSize: 16,
+  phoneButtonText: {
+    color: colors.white,
+    fontSize: 14,
     fontWeight: '600',
+  },
+  ticketButton: {
+    backgroundColor: colors.accent,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  ticketButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  tipsList: {
+    gap: 8,
+  },
+  tipText: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    lineHeight: 20,
   },
 });
 

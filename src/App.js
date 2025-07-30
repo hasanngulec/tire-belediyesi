@@ -4,6 +4,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+// Remote update devre dışı bırakma
+if (__DEV__) {
+  const originalConsoleError = console.error;
+  console.error = (...args) => {
+    if (args[0] && typeof args[0] === 'string' && args[0].includes('java.io.IOException: failed to download remote update')) {
+      return; // Bu hatayı görmezden gel
+    }
+    originalConsoleError.apply(console, args);
+  };
+}
+
 // Screens
 import HomeScreen from './screens/HomeScreen';
 import EventsScreen from './screens/EventsScreen';

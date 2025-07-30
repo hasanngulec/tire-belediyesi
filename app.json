@@ -28,6 +28,13 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "webpack"
+    },
+    "updates": {
+      "enabled": false,
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image, RefreshCon
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../styles/colors';
 import { commonStyles } from '../styles/commonStyles';
-import { supabase, TABLES } from '../config/supabase';
+import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
 
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
@@ -16,10 +16,11 @@ const EventsScreen = ({ navigation }) => {
 
   const fetchEvents = async () => {
     try {
+      // Yeni etkinlikler tablosundan veri çek
       const { data, error } = await supabase
-        .from(TABLES.EVENTS)
+        .from(TABLES.ETKINLIKLER)
         .select('*')
-        .order('event_date', { ascending: false });
+        .order(TABLE_COLUMNS.ETKINLIKLER.TARIH, { ascending: false });
 
       if (error) {
         console.error('Error fetching events:', error);
@@ -40,27 +41,39 @@ const EventsScreen = ({ navigation }) => {
   const getDemoEvents = () => [
     {
       id: 1,
-      title: 'Tire Kültür Festivali',
-      description: 'Geleneksel el sanatları ve kültür etkinlikleri',
-      event_date: '2024-06-15',
-      location: 'Tire Eski Belediye Binası',
-      image_url: null,
+      ad: 'Tire Kültür Festivali',
+      aciklama: 'Geleneksel el sanatları ve kültür etkinlikleri',
+      tarih: '2024-06-15',
+      adres: 'Tire Eski Belediye Binası',
+      fotograf: null,
+      telefon_numarasi: '0232 123 45 67',
+      bilet_linki: null,
+      enlem: 38.0897,
+      boylam: 27.7358
     },
     {
       id: 2,
-      title: 'Ramazan Etkinlikleri',
-      description: 'İftar programları ve kültürel etkinlikler',
-      event_date: '2024-04-20',
-      location: 'Tire Merkez',
-      image_url: null,
+      ad: 'Ramazan Etkinlikleri',
+      aciklama: 'İftar programları ve kültürel etkinlikler',
+      tarih: '2024-04-20',
+      adres: 'Tire Merkez',
+      fotograf: null,
+      telefon_numarasi: '0232 123 45 68',
+      bilet_linki: null,
+      enlem: 38.0895,
+      boylam: 27.7355
     },
     {
       id: 3,
-      title: 'Çevre Gününü Kutlama',
-      description: 'Ağaç dikme ve çevre bilincini artırma etkinliği',
-      event_date: '2024-06-05',
-      location: 'Tire Millet Bahçesi',
-      image_url: null,
+      ad: 'Çevre Gününü Kutlama',
+      aciklama: 'Ağaç dikme ve çevre bilincini artırma etkinliği',
+      tarih: '2024-06-05',
+      adres: 'Tire Millet Bahçesi',
+      fotograf: null,
+      telefon_numarasi: '0232 123 45 69',
+      bilet_linki: null,
+      enlem: 38.0900,
+      boylam: 27.7360
     },
   ];
 
@@ -84,8 +97,8 @@ const EventsScreen = ({ navigation }) => {
       onPress={() => navigation.navigate('EventDetail', { event })}
     >
       <View style={styles.eventImageContainer}>
-        {event.image_url ? (
-          <Image source={{ uri: event.image_url }} style={styles.eventImage} />
+        {event.fotograf ? (
+          <Image source={{ uri: event.fotograf }} style={styles.eventImage} />
         ) : (
           <View style={styles.eventImagePlaceholder}>
             <Icon name="event" size={40} color={colors.primary} />
@@ -94,27 +107,39 @@ const EventsScreen = ({ navigation }) => {
       </View>
       
       <View style={styles.eventContent}>
-        <Text style={styles.eventTitle}>{event.title}</Text>
+        <Text style={styles.eventTitle}>{event.ad}</Text>
         <Text style={styles.eventDescription} numberOfLines={2}>
-          {event.description}
+          {event.aciklama}
         </Text>
         
         <View style={styles.eventDetails}>
-          <View style={styles.eventDetailRow}>
-            <Icon name="access-time" size={16} color={colors.primary} />
-            <Text style={styles.eventDetailText}>
-              {formatDate(event.event_date)}
-            </Text>
+          <View style={styles.detailRow}>
+            <Icon name="event" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>{formatDate(event.tarih)}</Text>
           </View>
           
-          <View style={styles.eventDetailRow}>
-            <Icon name="place" size={16} color={colors.primary} />
-            <Text style={styles.eventDetailText}>{event.location}</Text>
+          <View style={styles.detailRow}>
+            <Icon name="location-on" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>{event.adres}</Text>
           </View>
+          
+          {event.telefon_numarasi && (
+            <View style={styles.detailRow}>
+              <Icon name="phone" size={16} color={colors.primary} />
+              <Text style={styles.detailText}>{event.telefon_numarasi}</Text>
+            </View>
+          )}
         </View>
+        
+        {event.bilet_linki && (
+          <View style={styles.ticketSection}>
+            <TouchableOpacity style={styles.ticketButton}>
+              <Icon name="confirmation-number" size={16} color={colors.white} />
+              <Text style={styles.ticketButtonText}>Bilet Al</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      
-      <Icon name="chevron-right" size={24} color={colors.gray} />
     </TouchableOpacity>
   );
 
@@ -135,24 +160,27 @@ const EventsScreen = ({ navigation }) => {
         }
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Güncel Etkinlikler</Text>
+          <Icon name="event" size={32} color={colors.white} />
+          <Text style={styles.headerTitle}>Etkinlikler</Text>
           <Text style={styles.headerSubtitle}>
-            Tire'de düzenlenen etkinlikleri takip edin
+            Tire'deki güncel etkinlikler ve organizasyonlar
           </Text>
         </View>
 
-        {events.length > 0 ? (
-          events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))
-        ) : (
-          <View style={styles.emptyState}>
-            <Icon name="event-busy" size={64} color={colors.gray} />
-            <Text style={styles.emptyStateText}>
-              Şu anda planlanmış etkinlik bulunmamaktadır.
-            </Text>
-          </View>
-        )}
+        <View style={styles.eventsSection}>
+          {events.length > 0 ? (
+            events.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <Icon name="event" size={64} color={colors.gray} />
+              <Text style={styles.emptyStateText}>
+                Etkinlik bilgisi bulunamadı.
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
@@ -220,14 +248,33 @@ const styles = StyleSheet.create({
   eventDetails: {
     gap: 4,
   },
-  eventDetailRow: {
+  detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  eventDetailText: {
+  detailText: {
     fontSize: 12,
     color: colors.text.secondary,
+  },
+  ticketSection: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  ticketButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  ticketButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '600',
   },
   loadingText: {
     fontSize: 16,

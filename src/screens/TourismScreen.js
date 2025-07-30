@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image, RefreshCon
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../styles/colors';
 import { commonStyles } from '../styles/commonStyles';
-import { supabase, TABLES } from '../config/supabase';
+import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
 
 const TourismScreen = ({ navigation }) => {
   const [tourismSpots, setTourismSpots] = useState([]);
@@ -16,10 +16,11 @@ const TourismScreen = ({ navigation }) => {
 
   const fetchTourismSpots = async () => {
     try {
+      // Yeni gezi_noktalari tablosundan veri çek
       const { data, error } = await supabase
-        .from(TABLES.TOURISM_SPOTS)
+        .from(TABLES.GEZI_NOKTALARI)
         .select('*')
-        .order('rating', { ascending: false });
+        .order(TABLE_COLUMNS.GEZI_NOKTALARI.AD, { ascending: true });
 
       if (error) {
         console.error('Error fetching tourism spots:', error);
@@ -39,58 +40,68 @@ const TourismScreen = ({ navigation }) => {
   const getDemoTourismSpots = () => [
     {
       id: 1,
-      name: 'Tire Eski Belediye Binası',
-      description: 'Osmanlı döneminden kalma tarihi belediye binası',
-      category: 'Tarihi Yapı',
-      rating: 4.5,
-      visit_duration: '30 dakika',
-      entrance_fee: 'Ücretsiz',
-      image_url: null,
-      location: 'Tire Merkez',
+      ad: 'Tire Eski Belediye Binası',
+      aciklama: 'Osmanlı döneminden kalma tarihi belediye binası',
+      kategori: 'Tarihi Yapı',
+      enlem: 38.0897,
+      boylam: 27.7358,
+      fotograf: null,
+      acilis_saati: '09:00',
+      kapanis_saati: '17:00',
+      telefon_numarasi: '0232 123 45 67',
+      adres: 'Tire Merkez'
     },
     {
       id: 2,
-      name: 'Tire Müzesi',
-      description: 'Tire\'nin tarihini ve kültürünü yansıtan eserler',
-      category: 'Müze',
-      rating: 4.3,
-      visit_duration: '1-2 saat',
-      entrance_fee: '10 TL',
-      image_url: null,
-      location: 'Cumhuriyet Meydanı',
+      ad: 'Tire Müzesi',
+      aciklama: 'Tire\'nin tarihini ve kültürünü yansıtan eserler',
+      kategori: 'Müze',
+      enlem: 38.0893,
+      boylam: 27.7352,
+      fotograf: null,
+      acilis_saati: '09:00',
+      kapanis_saati: '18:00',
+      telefon_numarasi: '0232 123 45 68',
+      adres: 'Cumhuriyet Meydanı'
     },
     {
       id: 3,
-      name: 'Hacı Ömer Camii',
-      description: '16. yüzyıldan kalma tarihi cami',
-      category: 'Dini Yapı',
-      rating: 4.7,
-      visit_duration: '20 dakika',
-      entrance_fee: 'Ücretsiz',
-      image_url: null,
-      location: 'Eski Mahalle',
+      ad: 'Hacı Ömer Camii',
+      aciklama: '16. yüzyıldan kalma tarihi cami',
+      kategori: 'Dini Yapı',
+      enlem: 38.0891,
+      boylam: 27.7349,
+      fotograf: null,
+      acilis_saati: '05:00',
+      kapanis_saati: '23:00',
+      telefon_numarasi: '0232 123 45 69',
+      adres: 'Eski Mahalle'
     },
     {
       id: 4,
-      name: 'Tire Pazarı',
-      description: 'Geleneksel Tire pazarı ve el sanatları',
-      category: 'Kültürel',
-      rating: 4.2,
-      visit_duration: '2-3 saat',
-      entrance_fee: 'Ücretsiz',
-      image_url: null,
-      location: 'Pazar Yeri',
+      ad: 'Tire Pazarı',
+      aciklama: 'Geleneksel Tire pazarı ve el sanatları',
+      kategori: 'Kültürel',
+      enlem: 38.0890,
+      boylam: 27.7350,
+      fotograf: null,
+      acilis_saati: '08:00',
+      kapanis_saati: '18:00',
+      telefon_numarasi: '0232 123 45 70',
+      adres: 'Pazar Yeri'
     },
     {
       id: 5,
-      name: 'Tire Millet Bahçesi',
-      description: 'Doğa yürüyüşü ve rekreasyon alanı',
-      category: 'Doğa',
-      rating: 4.0,
-      visit_duration: '1-3 saat',
-      entrance_fee: 'Ücretsiz',
-      image_url: null,
-      location: 'Yeni Mahalle',
+      ad: 'Tire Millet Bahçesi',
+      aciklama: 'Doğa yürüyüşü ve rekreasyon alanı',
+      kategori: 'Doğa',
+      enlem: 38.0900,
+      boylam: 27.7360,
+      fotograf: null,
+      acilis_saati: '06:00',
+      kapanis_saati: '22:00',
+      telefon_numarasi: '0232 123 45 71',
+      adres: 'Yeni Mahalle'
     },
   ];
 
@@ -99,25 +110,37 @@ const TourismScreen = ({ navigation }) => {
     fetchTourismSpots();
   };
 
-  const getCategoryIcon = (category) => {
-    switch (category) {
-      case 'Tarihi Yapı': return 'account-balance';
-      case 'Müze': return 'museum';
-      case 'Dini Yapı': return 'place-of-worship';
-      case 'Kültürel': return 'festival';
-      case 'Doğa': return 'nature';
-      default: return 'place';
+  const getCategoryIcon = (kategori) => {
+    switch (kategori?.toLowerCase()) {
+      case 'tarihi yapı':
+        return 'account-balance';
+      case 'müze':
+        return 'museum';
+      case 'dini yapı':
+        return 'mosque';
+      case 'kültürel':
+        return 'culture';
+      case 'doğa':
+        return 'park';
+      default:
+        return 'place';
     }
   };
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case 'Tarihi Yapı': return '#8D6E63';
-      case 'Müze': return '#5E35B1';
-      case 'Dini Yapı': return '#00ACC1';
-      case 'Kültürel': return '#FB8C00';
-      case 'Doğa': return '#43A047';
-      default: return colors.primary;
+  const getCategoryColor = (kategori) => {
+    switch (kategori?.toLowerCase()) {
+      case 'tarihi yapı':
+        return '#8B4513';
+      case 'müze':
+        return '#4A90E2';
+      case 'dini yapı':
+        return '#7B68EE';
+      case 'kültürel':
+        return '#FF6B35';
+      case 'doğa':
+        return '#4CAF50';
+      default:
+        return colors.primary;
     }
   };
 
@@ -127,48 +150,44 @@ const TourismScreen = ({ navigation }) => {
       onPress={() => navigation.navigate('TourismSpotDetail', { spot })}
     >
       <View style={styles.spotImageContainer}>
-        {spot.image_url ? (
-          <Image source={{ uri: spot.image_url }} style={styles.spotImage} />
+        {spot.fotograf ? (
+          <Image source={{ uri: spot.fotograf }} style={styles.spotImage} />
         ) : (
-          <View style={[styles.spotImagePlaceholder, { backgroundColor: getCategoryColor(spot.category) + '20' }]}>
-            <Icon name={getCategoryIcon(spot.category)} size={40} color={getCategoryColor(spot.category)} />
+          <View style={styles.spotImagePlaceholder}>
+            <Icon name={getCategoryIcon(spot.kategori)} size={40} color={colors.primary} />
           </View>
         )}
         
-        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(spot.category) }]}>
-          <Text style={styles.categoryText}>{spot.category}</Text>
+        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(spot.kategori) }]}>
+          <Text style={styles.categoryText}>{spot.kategori}</Text>
         </View>
       </View>
-
+      
       <View style={styles.spotContent}>
-        <Text style={styles.spotName}>{spot.name}</Text>
+        <Text style={styles.spotTitle}>{spot.ad}</Text>
         <Text style={styles.spotDescription} numberOfLines={2}>
-          {spot.description}
+          {spot.aciklama}
         </Text>
-
+        
         <View style={styles.spotDetails}>
           <View style={styles.detailRow}>
-            <Icon name="star" size={16} color="#FFD700" />
-            <Text style={styles.detailText}>{spot.rating}</Text>
+            <Icon name="access-time" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>
+              {spot.acilis_saati} - {spot.kapanis_saati}
+            </Text>
           </View>
-
+          
           <View style={styles.detailRow}>
-            <Icon name="access-time" size={16} color={colors.text.secondary} />
-            <Text style={styles.detailText}>{spot.visit_duration}</Text>
+            <Icon name="location-on" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>{spot.adres}</Text>
           </View>
-
-          <View style={styles.detailRow}>
-            <Icon name="attach-money" size={16} color={colors.text.secondary} />
-            <Text style={styles.detailText}>{spot.entrance_fee}</Text>
-          </View>
-        </View>
-
-        <View style={styles.spotFooter}>
-          <View style={styles.locationRow}>
-            <Icon name="place" size={16} color={colors.primary} />
-            <Text style={styles.locationText}>{spot.location}</Text>
-          </View>
-          <Icon name="chevron-right" size={24} color={colors.gray} />
+          
+          {spot.telefon_numarasi && (
+            <View style={styles.detailRow}>
+              <Icon name="phone" size={16} color={colors.primary} />
+              <Text style={styles.detailText}>{spot.telefon_numarasi}</Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -177,7 +196,7 @@ const TourismScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={[commonStyles.container, commonStyles.centerContent]}>
-        <Text style={styles.loadingText}>Gezi noktaları yükleniyor...</Text>
+        <Text style={styles.loadingText}>Turizm noktaları yükleniyor...</Text>
       </View>
     );
   }
@@ -191,36 +210,11 @@ const TourismScreen = ({ navigation }) => {
         }
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Gezi Noktaları</Text>
+          <Icon name="place" size={32} color={colors.white} />
+          <Text style={styles.headerTitle}>Turizm Noktaları</Text>
           <Text style={styles.headerSubtitle}>
-            Tire'nin tarihi ve turistik yerlerini keşfedin
+            Tire'nin tarihi ve kültürel mekanları
           </Text>
-        </View>
-
-        <View style={styles.quickActions}>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('TravelRoutes')}
-          >
-            <Icon name="directions" size={24} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Gezi Rotaları</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('HowToGetThere')}
-          >
-            <Icon name="directions-car" size={24} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Nasıl Gelinir</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('InfluencerRoutes')}
-          >
-            <Icon name="star" size={24} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Özel Rotalar</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.spotsSection}>
@@ -232,7 +226,7 @@ const TourismScreen = ({ navigation }) => {
             <View style={styles.emptyState}>
               <Icon name="place" size={64} color={colors.gray} />
               <Text style={styles.emptyStateText}>
-                Gezi noktası bilgisi bulunamadı.
+                Turizm noktası bilgisi bulunamadı.
               </Text>
             </View>
           )}
@@ -322,7 +316,7 @@ const styles = StyleSheet.create({
   spotContent: {
     padding: 16,
   },
-  spotName: {
+  spotTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.text.primary,

@@ -1,249 +1,162 @@
-import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image, RefreshControl, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../styles/colors';
 import { commonStyles } from '../styles/commonStyles';
+import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
 
-const InfluencerRoutesScreen = () => {
-  const influencerRoutes = [
-    {
-      id: 1,
-      influencer: 'Gezgin Ayşe',
-      title: 'Instagrammable Tire Turu',
-      description: 'En fotojenik kareler için özel rota',
-      duration: '3-4 saat',
-      difficulty: 'Kolay',
-      highlights: [
-        'Tarihi belediye binası önünde klasik fotoğraf',
-        'Tire pazarında renkli tezgahlar',
-        'Eski sokakların nostaljik atmosferi',
-        'Sunset için en iyi nokta - Seyir Terası'
-      ],
-      tips: [
-        'Sabah erken saatlerde daha az kalabalık',
-        'Altın saat (golden hour) için akşam 17:00-18:30',
-        'Portre lensi tavsiye edilir'
-      ],
-      instagram: '@gezginayse',
-      followerCount: '125K',
-      avatar: null,
-    },
-    {
-      id: 2,
-      influencer: 'Tarih Severler',
-      title: 'Osmanlı İzleri Rotası',
-      description: 'Tarihi yapıları sosyal medyada paylaşmak isteyenler için',
-      duration: '2-3 saat',
-      difficulty: 'Orta',
-      highlights: [
-        'Hacı Ömer Camii\'nin muhteşem mimarisi',
-        'Eski belediye binası detay çekimleri',
-        'Tarihi çeşmeler ve sokak arası görünümler',
-        'Geleneksel el sanatları atölyeleri'
-      ],
-      tips: [
-        'Tarihi bilgileri önceden araştırın',
-        'Hikaye anlatımı için video çekin',
-        'Yerel rehberlerle iletişime geçin'
-      ],
-      instagram: '@tarihseverler',
-      followerCount: '89K',
-      avatar: null,
-    },
-    {
-      id: 3,
-      influencer: 'Lezzet Avcısı',
-      title: 'Tire Lezzetleri Turu',
-      description: 'Food bloggerlar için özel gastronomi rotası',
-      duration: '4-5 saat',
-      difficulty: 'Kolay',
-      highlights: [
-        'Geleneksel Tire lokumu atölyesi',
-        'Yerel restoranlarda otantik lezzetler',
-        'Ev yapımı reçel ve turşu dükkanları',
-        'Köy kahvaltısı deneyimi'
-      ],
-      tips: [
-        'Aç karnına başlamayın, çok çeşit var!',
-        'Malzeme listelerini not alın',
-        'Video story için kısa kliplere odaklanın'
-      ],
-      instagram: '@lezzetavcisi',
-      followerCount: '67K',
-      avatar: null,
-    },
-    {
-      id: 4,
-      influencer: 'Doğa Tutkunları',
-      title: 'Tire Doğa Kaçamağı',
-      description: 'Doğa severlerin favorisi manzara rotası',
-      duration: '5-6 saat',
-      difficulty: 'Zor',
-      highlights: [
-        'Millet Bahçesi\'nden şehir manzarası',
-        'Doğa yürüyüş parkurundan orman görünümleri',
-        'Drone çekimleri için geniş alanlar',
-        'Gün batımı için tepeler'
-      ],
-      tips: [
-        'Spor ayakkabı ve su şişesi şart',
-        'Drone için gerekli izinleri alın',
-        'Hava koşullarını takip edin'
-      ],
-      instagram: '@dogatatkunlari',
-      followerCount: '134K',
-      avatar: null,
-    },
-  ];
+const InfluencerRoutesScreen = ({ navigation }) => {
+  const [influencers, setInfluencers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const getInfluencerIcon = (influencer) => {
-    if (influencer.includes('Ayşe')) return 'photo-camera';
-    if (influencer.includes('Tarih')) return 'account-balance';
-    if (influencer.includes('Lezzet')) return 'restaurant';
-    if (influencer.includes('Doğa')) return 'nature';
-    return 'star';
-  };
+  useEffect(() => {
+    fetchInfluencers();
+  }, []);
 
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'Kolay': return '#4CAF50';
-      case 'Orta': return '#FF9800';
-      case 'Zor': return '#F44336';
-      default: return colors.gray;
+  const fetchInfluencers = async () => {
+    try {
+      // Yeni influencerlar tablosundan veri çek
+      const { data, error } = await supabase
+        .from(TABLES.INFLUENCERLAR)
+        .select('*')
+        .order(TABLE_COLUMNS.INFLUENCERLAR.AD, { ascending: true });
+
+      if (error) {
+        console.error('Error fetching influencers:', error);
+        setInfluencers(getDemoInfluencers());
+      } else {
+        setInfluencers(data || getDemoInfluencers());
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setInfluencers(getDemoInfluencers());
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  const InfluencerCard = ({ route }) => (
-    <View style={styles.routeCard}>
-      <View style={styles.routeHeader}>
-        <View style={styles.influencerInfo}>
-          <View style={styles.avatarContainer}>
-            <Icon name={getInfluencerIcon(route.influencer)} size={24} color={colors.primary} />
+  const getDemoInfluencers = () => [
+    {
+      id: 1,
+      ad: 'Tire Gezgin',
+      aciklama: 'Tire\'nin gizli kalmış güzelliklerini keşfeden seyahat blogcusu',
+      fotograf: null,
+      instagram_linki: 'https://instagram.com/tiregezgin',
+      rota_id: 1
+    },
+    {
+      id: 2,
+      ad: 'Kültür Avcısı',
+      aciklama: 'Tire\'nin tarihi ve kültürel mirasını tanıtan içerik üreticisi',
+      fotograf: null,
+      instagram_linki: 'https://instagram.com/kulturavcisi',
+      rota_id: 2
+    },
+    {
+      id: 3,
+      ad: 'Doğa Rehberi',
+      aciklama: 'Tire\'nin doğal güzelliklerini ve yürüyüş rotalarını paylaşan doğa tutkunu',
+      fotograf: null,
+      instagram_linki: 'https://instagram.com/dogarehberi',
+      rota_id: 3
+    },
+  ];
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchInfluencers();
+  };
+
+  const openInstagram = (instagramLink) => {
+    if (instagramLink) {
+      Linking.openURL(instagramLink);
+    }
+  };
+
+  const InfluencerCard = ({ influencer }) => (
+    <TouchableOpacity style={styles.influencerCard}>
+      <View style={styles.influencerImageContainer}>
+        {influencer.fotograf ? (
+          <Image source={{ uri: influencer.fotograf }} style={styles.influencerImage} />
+        ) : (
+          <View style={styles.influencerImagePlaceholder}>
+            <Icon name="person" size={40} color={colors.primary} />
           </View>
-          <View style={styles.influencerDetails}>
-            <Text style={styles.influencerName}>{route.influencer}</Text>
-            <View style={styles.socialInfo}>
-              <Text style={styles.instagramHandle}>{route.instagram}</Text>
-              <Text style={styles.followerCount}>{route.followerCount} takipçi</Text>
-            </View>
+        )}
+      </View>
+      
+      <View style={styles.influencerContent}>
+        <Text style={styles.influencerName}>{influencer.ad}</Text>
+        <Text style={styles.influencerDescription} numberOfLines={3}>
+          {influencer.aciklama}
+        </Text>
+        
+        <View style={styles.influencerDetails}>
+          <View style={styles.detailRow}>
+            <Icon name="route" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>Rota #{influencer.rota_id}</Text>
           </View>
-        </View>
-        <View style={[styles.difficultyBadge, { backgroundColor: getDifficultyColor(route.difficulty) }]}>
-          <Text style={styles.difficultyText}>{route.difficulty}</Text>
+          
+          {influencer.instagram_linki && (
+            <TouchableOpacity 
+              style={styles.instagramButton}
+              onPress={() => openInstagram(influencer.instagram_linki)}
+            >
+              <Icon name="camera-alt" size={16} color={colors.white} />
+              <Text style={styles.instagramButtonText}>Instagram</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
-
-      <View style={styles.routeContent}>
-        <Text style={styles.routeTitle}>{route.title}</Text>
-        <Text style={styles.routeDescription}>{route.description}</Text>
-
-        <View style={styles.routeDetails}>
-          <View style={styles.detailItem}>
-            <Icon name="access-time" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{route.duration}</Text>
-          </View>
-        </View>
-
-        <View style={styles.highlightsSection}>
-          <Text style={styles.sectionTitle}>✨ Öne Çıkanlar</Text>
-          {route.highlights.map((highlight, index) => (
-            <View key={index} style={styles.highlightItem}>
-              <Icon name="camera-alt" size={14} color={colors.accent} />
-              <Text style={styles.highlightText}>{highlight}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.tipsSection}>
-          <Text style={styles.sectionTitle}>💡 İpuçları</Text>
-          {route.tips.map((tip, index) => (
-            <View key={index} style={styles.tipItem}>
-              <Icon name="lightbulb-outline" size={14} color={colors.info} />
-              <Text style={styles.tipText}>{tip}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.followButton}>
-            <Icon name="person-add" size={16} color={colors.white} />
-            <Text style={styles.followButtonText}>Takip Et</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.shareButton}>
-            <Icon name="share" size={16} color={colors.primary} />
-            <Text style={styles.shareButtonText}>Paylaş</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.saveButton}>
-            <Icon name="bookmark-border" size={16} color={colors.primary} />
-            <Text style={styles.saveButtonText}>Kaydet</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View style={[commonStyles.container, commonStyles.centerContent]}>
+        <Text style={styles.loadingText}>Influencer rotaları yükleniyor...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={commonStyles.container}>
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.header}>
           <Icon name="star" size={32} color={colors.white} />
-          <Text style={styles.headerTitle}>Influencer Rota Önerileri</Text>
+          <Text style={styles.headerTitle}>Influencer Rotaları</Text>
           <Text style={styles.headerSubtitle}>
-            Sosyal medya fenomenlerinden özel rota tavsiyeleri
+            Tire'yi farklı gözlerle keşfedin
           </Text>
         </View>
 
-        <View style={styles.introSection}>
-          <View style={styles.introCard}>
-            <Icon name="info" size={24} color={colors.info} />
-            <View style={styles.introText}>
-              <Text style={styles.introTitle}>Özel İçerik Rotaları</Text>
-              <Text style={styles.introDescription}>
-                Popüler influencerların deneyimledikleri ve takipçileriyle paylaştıkları 
-                özel rotalar. Her rota farklı tema ve fotoğraf tarzına odaklanıyor.
+        <View style={styles.infoSection}>
+          <Text style={styles.infoTitle}>🌟 Özel Deneyimler</Text>
+          <Text style={styles.infoText}>
+            Tire'nin yerel influencerları tarafından hazırlanan özel rotalar ve deneyimler
+          </Text>
+        </View>
+
+        <View style={styles.influencersSection}>
+          {influencers.length > 0 ? (
+            influencers.map((influencer) => (
+              <InfluencerCard key={influencer.id} influencer={influencer} />
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <Icon name="star" size={64} color={colors.gray} />
+              <Text style={styles.emptyStateText}>
+                Influencer rotası bilgisi bulunamadı.
               </Text>
             </View>
-          </View>
-        </View>
-
-        <View style={styles.routesSection}>
-          {influencerRoutes.map((route) => (
-            <InfluencerCard key={route.id} route={route} />
-          ))}
-        </View>
-
-        <View style={styles.socialTipsSection}>
-          <Text style={styles.sectionTitle}>📱 Sosyal Medya İpuçları</Text>
-          
-          <View style={styles.socialTipCard}>
-            <Icon name="camera" size={20} color={colors.primary} />
-            <Text style={styles.socialTipText}>
-              En iyi fotoğraflar için sabah 08:00-10:00 ve akşam 17:00-19:00 saatleri ideal.
-            </Text>
-          </View>
-
-          <View style={styles.socialTipCard}>
-            <Icon name="tag" size={20} color={colors.accent} />
-            <Text style={styles.socialTipText}>
-              #Tire #TireBelediyesi #İzmir #GezilecekyerlerTürkiye hashtaglerini kullanın.
-            </Text>
-          </View>
-
-          <View style={styles.socialTipCard}>
-            <Icon name="people" size={20} color={colors.success} />
-            <Text style={styles.socialTipText}>
-              Yerel işletmeleri etiketleyerek onlara da destek olabilirsiniz.
-            </Text>
-          </View>
-
-          <View style={styles.socialTipCard}>
-            <Icon name="location-on" size={20} color={colors.error} />
-            <Text style={styles.socialTipText}>
-              Konum paylaşımı yaparken hassas alanlara dikkat edin.
-            </Text>
-          </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -272,114 +185,78 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.9,
   },
-  introSection: {
-    padding: 16,
-  },
-  introCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    ...commonStyles.shadow,
-  },
-  introText: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  introTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 4,
-  },
-  introDescription: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
-  },
-  routesSection: {
-    paddingHorizontal: 16,
-  },
-  routeCard: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: 'hidden',
-    ...commonStyles.shadow,
-  },
-  routeHeader: {
+  infoSection: {
     padding: 16,
     backgroundColor: colors.background,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  influencerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  avatarContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  influencerDetails: {
-    flex: 1,
-  },
-  influencerName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 2,
-  },
-  socialInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  instagramHandle: {
-    fontSize: 12,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  followerCount: {
-    fontSize: 12,
-    color: colors.text.secondary,
-  },
-  difficultyBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  difficultyText: {
-    fontSize: 12,
-    color: colors.white,
-    fontWeight: '600',
-  },
-  routeContent: {
-    padding: 16,
-  },
-  routeTitle: {
+  infoTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.text.primary,
     marginBottom: 4,
   },
-  routeDescription: {
+  infoText: {
     fontSize: 14,
     color: colors.text.secondary,
-    marginBottom: 12,
+    lineHeight: 20,
   },
-  routeDetails: {
+  influencersSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  influencerCard: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
     marginBottom: 16,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...commonStyles.shadow,
   },
-  detailItem: {
+  influencerImageContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  influencerImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 40,
+  },
+  influencerImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 40,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  influencerContent: {
+    flex: 1,
+  },
+  influencerName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text.primary,
+    marginBottom: 4,
+  },
+  influencerDescription: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    marginBottom: 8,
+  },
+  influencerDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -388,107 +265,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text.secondary,
   },
-  highlightsSection: {
-    marginBottom: 16,
-  },
-  tipsSection: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  highlightItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 4,
-    gap: 8,
-  },
-  highlightText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    flex: 1,
-    lineHeight: 18,
-  },
-  tipItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 4,
-    gap: 8,
-  },
-  tipText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    flex: 1,
-    lineHeight: 18,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  followButton: {
-    backgroundColor: colors.secondary,
-    paddingVertical: 8,
+  instagramButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 6,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  followButtonText: {
+  instagramButtonText: {
     fontSize: 12,
     color: colors.white,
     fontWeight: '500',
   },
-  shareButton: {
-    backgroundColor: colors.background,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    flexDirection: 'row',
+  emptyState: {
     alignItems: 'center',
-    gap: 4,
+    paddingVertical: 40,
   },
-  shareButtonText: {
-    fontSize: 12,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  saveButton: {
-    backgroundColor: colors.background,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  saveButtonText: {
-    fontSize: 12,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  socialTipsSection: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  socialTipCard: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    ...commonStyles.shadow,
-  },
-  socialTipText: {
-    fontSize: 14,
+  emptyStateText: {
+    fontSize: 16,
     color: colors.text.secondary,
-    flex: 1,
-    lineHeight: 20,
+    marginTop: 10,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: colors.text.secondary,
   },
 });
 

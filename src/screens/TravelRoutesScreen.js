@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Text, TouchableOpacity, RefreshControl } 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../styles/colors';
 import { commonStyles } from '../styles/commonStyles';
-import { supabase, TABLES } from '../config/supabase';
+import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
 
 const TravelRoutesScreen = ({ navigation }) => {
   const [routes, setRoutes] = useState([]);
@@ -16,10 +16,11 @@ const TravelRoutesScreen = ({ navigation }) => {
 
   const fetchRoutes = async () => {
     try {
+      // Yeni rotalar tablosundan veri çek
       const { data, error } = await supabase
-        .from(TABLES.TRAVEL_ROUTES)
+        .from(TABLES.ROTALAR)
         .select('*')
-        .order('difficulty_level', { ascending: true });
+        .order(TABLE_COLUMNS.ROTALAR.ID, { ascending: true });
 
       if (error) {
         console.error('Error fetching routes:', error);
@@ -36,60 +37,25 @@ const TravelRoutesScreen = ({ navigation }) => {
     }
   };
 
+  // Yeni rotalar tablosu yapısına göre demo veriler
   const getDemoRoutes = () => [
     {
       id: 1,
-      name: 'Tarihi Merkez Turu',
-      description: 'Tire\'nin tarihi yerlerini keşfetmek için ideal rota',
-      duration: '2-3 saat',
-      distance: '3 km',
-      difficulty_level: 1,
-      starting_point: 'Cumhuriyet Meydanı',
-      stops: [
-        'Tire Belediyesi',
-        'Tire Müzesi',
-        'Hacı Ömer Camii',
-        'Eski Belediye Binası',
-        'Tarihi Pazaryeri'
-      ],
-      transportation: 'Yürüyüş',
-      best_time: 'Sabah 09:00 - 12:00',
+      aciklama: 'Tire\'nin tarihi yerlerini keşfetmek için ideal rota',
+      gezi_nok_id: 1,
+      kategori: 'Tarihi Tur'
     },
     {
       id: 2,
-      name: 'Kültür ve Zanaat Rotası',
-      description: 'El sanatları ve kültürel mekanları ziyaret etmek için özel rota',
-      duration: '4-5 saat',
-      distance: '5 km',
-      difficulty_level: 2,
-      starting_point: 'Tire Pazarı',
-      stops: [
-        'Geleneksel El Sanatları Atölyeleri',
-        'Tire Halı Dokuma Merkezi',
-        'Folklor Müzesi',
-        'Kültür Merkezi',
-        'Zanaat Sokağı'
-      ],
-      transportation: 'Yürüyüş + Bisiklet',
-      best_time: 'Öğleden sonra 14:00 - 18:00',
+      aciklama: 'El sanatları ve kültürel mekanları ziyaret etmek için özel rota',
+      gezi_nok_id: 4,
+      kategori: 'Kültür Turu'
     },
     {
       id: 3,
-      name: 'Doğa ve Rekreasyon Turu',
-      description: 'Tire\'nin doğal güzelliklerini keşfetmek için mükemmel rota',
-      duration: '3-4 saat',
-      distance: '8 km',
-      difficulty_level: 3,
-      starting_point: 'Tire Millet Bahçesi',
-      stops: [
-        'Millet Bahçesi',
-        'Doğa Yürüyüş Parkuru',
-        'Piknik Alanları',
-        'Seyir Terası',
-        'Çocuk Oyun Alanları'
-      ],
-      transportation: 'Yürüyüş + Bisiklet',
-      best_time: 'Sabah 08:00 - 12:00',
+      aciklama: 'Tire\'nin doğal güzelliklerini keşfetmek için mükemmel rota',
+      gezi_nok_id: 5,
+      kategori: 'Doğa Turu'
     },
   ];
 
@@ -98,86 +64,48 @@ const TravelRoutesScreen = ({ navigation }) => {
     fetchRoutes();
   };
 
-  const getDifficultyInfo = (level) => {
-    switch (level) {
-      case 1:
-        return { text: 'Kolay', color: '#4CAF50', icon: 'sentiment-satisfied' };
-      case 2:
-        return { text: 'Orta', color: '#FF9800', icon: 'sentiment-neutral' };
-      case 3:
-        return { text: 'Zor', color: '#F44336', icon: 'sentiment-dissatisfied' };
+  const getCategoryInfo = (kategori) => {
+    switch (kategori?.toLowerCase()) {
+      case 'tarihi tur':
+        return { text: 'Tarihi Tur', color: '#8B4513', icon: 'account-balance' };
+      case 'kültür turu':
+        return { text: 'Kültür Turu', color: '#FF6B35', icon: 'culture' };
+      case 'doğa turu':
+        return { text: 'Doğa Turu', color: '#4CAF50', icon: 'park' };
       default:
-        return { text: 'Bilinmiyor', color: colors.gray, icon: 'help' };
+        return { text: 'Genel Tur', color: colors.primary, icon: 'directions' };
     }
   };
 
-  const getTransportationIcon = (transportation) => {
-    if (transportation.includes('Yürüyüş')) return 'directions-walk';
-    if (transportation.includes('Bisiklet')) return 'directions-bike';
-    if (transportation.includes('Araç')) return 'directions-car';
-    return 'directions';
-  };
-
   const RouteCard = ({ route }) => {
-    const difficulty = getDifficultyInfo(route.difficulty_level);
+    const category = getCategoryInfo(route.kategori);
     
     return (
       <TouchableOpacity style={styles.routeCard}>
         <View style={styles.routeHeader}>
-          <Text style={styles.routeName}>{route.name}</Text>
-          <View style={[styles.difficultyBadge, { backgroundColor: difficulty.color }]}>
-            <Icon name={difficulty.icon} size={16} color={colors.white} />
-            <Text style={styles.difficultyText}>{difficulty.text}</Text>
+          <Text style={styles.routeName}>{route.kategori}</Text>
+          <View style={[styles.categoryBadge, { backgroundColor: category.color }]}>
+            <Icon name={category.icon} size={16} color={colors.white} />
+            <Text style={styles.categoryText}>{category.text}</Text>
           </View>
         </View>
 
-        <Text style={styles.routeDescription}>{route.description}</Text>
+        <Text style={styles.routeDescription}>{route.aciklama}</Text>
 
         <View style={styles.routeDetails}>
           <View style={styles.detailRow}>
-            <Icon name="access-time" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{route.duration}</Text>
+            <Icon name="directions" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>Rota #{route.id}</Text>
           </View>
 
           <View style={styles.detailRow}>
-            <Icon name="straighten" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{route.distance}</Text>
+            <Icon name="place" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>Gezi Noktası #{route.gezi_nok_id}</Text>
           </View>
 
           <View style={styles.detailRow}>
-            <Icon name={getTransportationIcon(route.transportation)} size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{route.transportation}</Text>
-          </View>
-        </View>
-
-        <View style={styles.routeInfo}>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>Başlangıç Noktası</Text>
-            <Text style={styles.infoValue}>{route.starting_point}</Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>En İyi Zaman</Text>
-            <Text style={styles.infoValue}>{route.best_time}</Text>
-          </View>
-        </View>
-
-        <View style={styles.stopsSection}>
-          <Text style={styles.stopsTitle}>Duraklar ({route.stops.length})</Text>
-          <View style={styles.stopsContainer}>
-            {route.stops.slice(0, 3).map((stop, index) => (
-              <View key={index} style={styles.stopItem}>
-                <View style={styles.stopNumber}>
-                  <Text style={styles.stopNumberText}>{index + 1}</Text>
-                </View>
-                <Text style={styles.stopText}>{stop}</Text>
-              </View>
-            ))}
-            {route.stops.length > 3 && (
-              <Text style={styles.moreStops}>
-                +{route.stops.length - 3} daha fazla durak
-              </Text>
-            )}
+            <Icon name="category" size={16} color={colors.primary} />
+            <Text style={styles.detailText}>{route.kategori}</Text>
           </View>
         </View>
 
@@ -315,7 +243,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
-  difficultyBadge: {
+  categoryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
@@ -323,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 4,
   },
-  difficultyText: {
+  categoryText: {
     fontSize: 12,
     color: colors.white,
     fontWeight: '600',
@@ -348,65 +276,6 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 14,
     color: colors.text.secondary,
-  },
-  routeInfo: {
-    flexDirection: 'row',
-    gap: 20,
-    marginBottom: 16,
-  },
-  infoSection: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: colors.text.secondary,
-    marginBottom: 2,
-  },
-  infoValue: {
-    fontSize: 14,
-    color: colors.text.primary,
-    fontWeight: '500',
-  },
-  stopsSection: {
-    marginBottom: 16,
-  },
-  stopsTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  stopsContainer: {
-    gap: 6,
-  },
-  stopItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stopNumber: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  stopNumberText: {
-    fontSize: 12,
-    color: colors.white,
-    fontWeight: 'bold',
-  },
-  stopText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    flex: 1,
-  },
-  moreStops: {
-    fontSize: 12,
-    color: colors.primary,
-    fontStyle: 'italic',
-    marginLeft: 28,
   },
   routeActions: {
     flexDirection: 'row',
