@@ -9,7 +9,8 @@ const HomeScreen = ({ navigation }) => {
     { title: 'Gezi Rotaları', icon: 'route', color: '#FF9800', onPress: () => navigation.navigate('TravelRoutes') },
     { title: 'Influencer Önerileri', icon: 'star', color: '#E91E63', onPress: () => navigation.navigate('InfluencerRoutes') },
     { title: 'Bize Ulaşın', icon: 'contact-phone', color: '#9C27B0', onPress: () => navigation.navigate('Contact') },
-    { title: 'Nöbetçi Eczaneler', icon: 'local-pharmacy', color: '#F44336', onPress: () => navigation.navigate('DutyPharmacies') }
+    { title: 'Nöbetçi Eczaneler', icon: 'local-pharmacy', color: '#F44336', onPress: () => navigation.navigate('DutyPharmacies') },
+    { title: 'Acil Durum', icon: 'warning', color: '#FF5722', onPress: () => navigation.navigate('Emergency') }
   ];
 
   return (
