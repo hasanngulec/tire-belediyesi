@@ -1,0 +1,117 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt
+
+(Bize Ulaşın Ekranı – ContactScreen.js)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda verilen .png ekran görüntüsünü ve teknik dokümanı esas alarak, React Native ile geliştirilmiş mobil uygulamanın “Bize Ulaşın” ekranının sadece UI (görsel arayüz) tasarımını güncelle.
+
+⚠️ Supabase üzerinden gelen veriler varsa onları koru,
+ℹ️ Eğer veri yoksa örnek içerikleri (placeholder) kullanabilirsin.
+❌ Backend yapısına, navigasyona veya veri sorgularına müdahale etme.
+
+⸻
+
+📎 REFERANSLAR:
+	•	Görsel: bize_ulasin.png
+	•	Component adı: ContactScreen.js
+	•	Teknik döküman:
+📄 /Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf
+(Bölüm: Ana Sayfa Hızlı Erişim → Bize Ulaşın)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+📞 Genel İletişim Bilgileri (Kartlar halinde)
+
+Her kart bir iletişim türünü temsil eder. Kartlar arası boşluk ve ikon hizaları .png görseline sadık olmalıdır.
+	•	Telefon
+	•	(0312) 555 0123
+	•	Açıklama: Mesai saatleri içinde arayabilirsiniz
+	•	İkon: telefon
+	•	E-posta
+	•	iletisim@xbelediyesi.gov.tr
+	•	Açıklama: Sorularınızı e-posta ile iletebilirsiniz
+	•	İkon: zarf
+	•	Adres
+	•	Cumhuriyet Mah. Belediye Cad. No:1
+	•	Açıklama: Merkez binayı ziyaret edebilirsiniz
+	•	İkon: harita pini
+	•	WhatsApp
+	•	(0312) 555 0124
+	•	Açıklama: 7/24 WhatsApp destek hattı
+	•	İkon: WhatsApp logosu
+
+⸻
+
+🏢 Departmanlar (Kategorili Liste Kutusu)
+	•	Başlık: Departmanlar
+	•	Her satırda:
+	•	Departman adı (örnek: İmar ve Şehircilik)
+	•	Telefon numarası
+	•	E-posta adresi
+
+Örnek departmanlar:
+	•	İmar ve Şehircilik:
+(0312) 555 0125
+imar@xbelediyesi.gov.tr
+	•	Çevre ve Temizlik:
+(0312) 555 0126
+cevre@xbelediyesi.gov.tr
+	•	Kültür ve Sosyal İşler:
+(0312) 555 0127
+kultur@xbelediyesi.gov.tr
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Veri çekme mantığına dokunma.
+	2.	Supabase verisi yoksa aşağıdaki gibi örnek içerikleri kullanabilirsin:
+
+{
+  phone: "(0312) 555 0123",
+  email: "iletisim@xbelediyesi.gov.tr",
+  address: "Cumhuriyet Mah. Belediye Cad. No:1",
+  whatsapp: "(0312) 555 0124",
+  departments: [
+    {
+      name: "İmar ve Şehircilik",
+      phone: "(0312) 555 0125",
+      email: "imar@xbelediyesi.gov.tr"
+    },
+    {
+      name: "Çevre ve Temizlik",
+      phone: "(0312) 555 0126",
+      email: "cevre@xbelediyesi.gov.tr"
+    },
+    {
+      name: "Kültür ve Sosyal İşler",
+      phone: "(0312) 555 0127",
+      email: "kultur@xbelediyesi.gov.tr"
+    }
+  ]
+}
+
+	3.	Tasarımda sadece StyleSheet düzenlemesi yapılmalı:
+	•	Kart hizalamaları
+	•	İkon boyutları
+	•	Yazı stilleri (bold, regular)
+	•	Renk, spacing ve padding .png tasarımıyla birebir uyumlu olmalı
+	4.	React Native bileşenleri kullanılmalı:
+	•	View, Text, ScrollView, TouchableOpacity, Image (ikonlar için)
+	5.	Alt menü (Bottom Tab) görünür olmalı ve aktif sekme vurgulanmalı
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ ContactScreen.js isminde bir React Native component
+	•	✅ Supabase verisi varsa gösterir, yoksa örnek verileri
+	•	✅ UI, bize_ulasin.png görseline ve dokümana tam uyumlu şekilde tasarlanmış olmalı
+
+⸻

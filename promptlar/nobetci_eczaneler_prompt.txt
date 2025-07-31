@@ -1,0 +1,115 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt
+
+(Nöbetçi Eczaneler Ekranı – DutyPharmaciesScreen.js)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıdaki .png ekran görüntüsünü ve teknik dokümanı dikkate alarak, React Native ile geliştirilmiş mobil uygulamanın Nöbetçi Eczaneler ekranının yalnızca UI (görsel arayüz) kısmını güncelle.
+
+✅ Supabase üzerinden gelen veriler varsa onları kullan,
+🔁 Eğer veri yoksa örnek içerikleri placeholder olarak göster,
+❌ Veri kaynaklarına veya backend bağlantılarına dokunma.
+
+⸻
+
+📎 REFERANSLAR:
+	•	Görsel: nobetci_eczaneler.png
+	•	Component adı: DutyPharmaciesScreen.js
+	•	Teknik döküman yolu:
+📄 /Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf
+(Bölüm: Ana Sayfa → Hızlı Erişim → Nöbetçi Eczaneler)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+🔴 Nöbetçi Eczane (Bugün)
+	•	Başlık: Nöbetçi Eczane (Bugün) (vurgulu kart, kırmızı zemin kenarlığı)
+	•	Eczane Adı: Şifa Eczanesi
+	•	Adres: İstiklal Caddesi No:45 Merkez
+	•	Etiket: Acil (kırmızı chip)
+	•	Açıklama: 24 Saat Açık (yeşil font)
+	•	Butonlar:
+	•	Ara (kırmızı primary)
+	•	Yol Tarifi (gri secondary)
+
+⸻
+
+🧾 Diğer Eczaneler
+
+Kartlar liste şeklindedir. Her kartta:
+	•	Eczane adı (örnek: “Sağlık Eczanesi”)
+	•	Açık/kapalı durumu (chip – yeşil: açık, gri: kapalı)
+	•	Adres + mesafe bilgisi (örnek: 0.8 km)
+	•	Çalışma saatleri (örnek: 08:00 - 22:00)
+	•	Hizmet etiketleri (örnek: “Reçeteli İlaç”, “Vitamin”, “Kozmetik” vb.)
+	•	Butonlar:
+	•	Ara (mavi primary)
+	•	Yol Tarifi (gri secondary)
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Veri yapısına ve fetch yapılarına dokunma.
+Supabase kullanılıyorsa aynı veri bağlantısı korunmalı.
+	2.	Supabase verisi yoksa aşağıdaki örnek içerikler gösterilebilir:
+
+{
+  dutyPharmacy: {
+    name: "Şifa Eczanesi",
+    address: "İstiklal Caddesi No:45 Merkez",
+    status: "Acil",
+    open24h: true
+  },
+  pharmacies: [
+    {
+      name: "Sağlık Eczanesi",
+      address: "Atatürk Caddesi No:15 Merkez",
+      distance: "0.8 km",
+      hours: "08:00 - 22:00",
+      services: ["Reçeteli İlaç", "Vitamin", "Kozmetik", "Bebek Ürünleri"],
+      status: "Açık"
+    },
+    {
+      name: "Merkez Eczanesi",
+      address: "Cumhuriyet Mahallesi Çarşı İçi No:3",
+      distance: "1.2 km",
+      hours: "09:00 - 21:00",
+      services: ["Reçeteli İlaç", "Homeopati", "Medikal Cihaz"],
+      status: "Açık"
+    },
+    {
+      name: "Aile Eczanesi",
+      address: "Bahçelievler Mahallesi Barış Caddesi No:27",
+      distance: "2.1 km",
+      status: "Kapalı"
+    }
+  ]
+}
+
+	3.	UI tasarımını sadece StyleSheet ile güncelle:
+	•	Kart köşeleri yuvarlatılmış olmalı
+	•	Chip’ler renklendirilmiş
+	•	Buton stilleri:
+	•	Ara: mavi ya da kırmızı (duruma göre)
+	•	Yol Tarifi: outline gri
+	•	Font boyutları, spacing ve hizalamalar .png dosyasına sadık olmalı
+	4.	React Native bileşenleri kullan:
+	•	View, Text, ScrollView, FlatList, TouchableOpacity
+	•	StyleSheet ile özelleştirme yapılmalı
+	5.	Alt menü görünür ve “Etkinlikler” dışındaki sekmeler pasif kalmalı
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ DutyPharmaciesScreen.js component dosyası
+	•	✅ Supabase verisi varsa gösterilir, yoksa örnek veriler placeholder olarak ekranda görünür
+	•	✅ UI, nobetci_eczaneler.png görseline birebir uyum sağlar
+	•	✅ Teknik dokümana %100 uyumludur
+
+⸻

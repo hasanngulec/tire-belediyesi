@@ -1,0 +1,127 @@
+
+⸻
+
+🧠 1. Yapay Zekaya Verilecek Final Prompt (Tasarımı Anlaması İçin)
+
+Sen bir React Native geliştiricisi ve UI analiz modelisin. Elindeki .png dosyasına göre, aşağıda detaylandırılan analiz dökümanıyla uyumlu bir tasarım oluşturmanı istiyorum.
+
+🎯 Amaç:
+
+Uygulama ekranı, ana_sayfa.png görseli ile birebir uyumlu olacak şekilde, React Native component yapısıyla yeniden oluşturulmalıdır.
+
+⸻
+
+📎 Referans Belgeler:
+	•	Görsel: ana_sayfa.png (ekran görüntüsü)
+	•	Doküman: “Tire Belediyesi Analiz Dökümanı”
+
+⸻
+
+🔍 Gerekli UI Bileşenleri:
+	1.	Üst Başlık Alanı
+	•	Sol üstte belediye logosu (yuvarlak çerçeveli).
+	•	Yanında: “X Belediyesine Hoşgeldiniz” metni (white font, bold).
+	•	Arka plan: #1976D2 mavi renkli bir kutu.
+	2.	Hava Durumu Kartı
+	•	“Şehir Merkezi”
+	•	--°C büyük font
+	•	“Hava durumu alınamadı” alt metin
+	•	Hafif gölgeli, yuvarlak kenarlı bir kart
+	3.	Hızlı Erişim Alanı (Yatay Scroll)
+	•	6 adet kart:
+	•	Nasıl Gelinir
+	•	Başkanın Mesajı
+	•	Gezi Rotaları
+	•	Influencer Önerileri
+	•	Bize Ulaşın
+	•	Nöbetçi Eczaneler
+	•	Her kartta bir ikon + başlık bulunmalı.
+	•	Kartlar yatay kaydırılabilir (horizontal ScrollView)
+	4.	Tanıtım Fotoğrafı
+	•	Sabit bir Sultanahmet görseli
+	•	Kart şeklinde ve köşeleri yuvarlatılmış
+	5.	Tarihçemiz Alanı
+	•	Başlık: “Tarihçemiz” (bold)
+	•	Açıklama metni: Sabit içerik, dış veri kaynağına bağlı değil
+	6.	Alt Menü (Bottom Tab Navigation)
+	•	Ana Sayfa (aktif)
+	•	Harita
+	•	Gezi Noktaları
+	•	Etkinlikler
+
+⸻
+
+⚠️ Kurallar:
+	•	Görseldeki her bileşenin sırası, hizası ve rengi birebir aynı olmalı.
+	•	Lütfen yaratıcı olma, sadece görsel ve dökümana bağlı kal.
+	•	Veri API’leri ile bağlantı yok, sabit örnekler kullanılabilir.
+	•	Tasarım .png dosyası ve iş planı dökümanına tam uyumlu olmalı.
+
+⸻
+
+🧱 2. React Native Kod (Tasarımın Component Hali)
+
+Aşağıda sadeleştirilmiş örnek bir React Native ekran kodu verdim:
+
+import React from 'react';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+
+export default function AnaSayfa() {
+  return (
+    <View style={styles.container}>
+      {/* Üst Header */}
+      <View style={styles.header}>
+        <View style={styles.logo} />
+        <Text style={styles.headerText}>X Belediyesine{"\n"}Hoşgeldiniz</Text>
+      </View>
+
+      {/* Hava Durumu */}
+      <View style={styles.weatherCard}>
+        <Text style={styles.weatherTitle}>Şehir Merkezi</Text>
+        <Text style={styles.weatherDegree}>--°C</Text>
+        <Text style={styles.weatherInfo}>Hava durumu alınamadı</Text>
+      </View>
+
+      {/* Hızlı Erişim */}
+      <Text style={styles.sectionTitle}>Hızlı Erişim</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.quickAccess}>
+        {["Nasıl Gelinir", "Başkanın Mesajı", "Gezi Rotaları", "Influencer Rotaları"].map((item, index) => (
+          <TouchableOpacity key={index} style={styles.quickCard}>
+            <View style={styles.iconPlaceholder} />
+            <Text style={styles.quickText}>{item}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Tanıtım Görseli */}
+      <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Sultan_Ahmed_Mosque_courtyard.jpg/640px-Sultan_Ahmed_Mosque_courtyard.jpg' }} style={styles.promoImage} />
+
+      {/* Tarihçemiz */}
+      <View style={styles.aboutSection}>
+        <Text style={styles.sectionTitle}>Tarihçemiz</Text>
+        <Text style={styles.aboutText}>
+          Şehrimiz, binlerce yıllık köklü bir geçmişe sahiptir. Antik çağlardan günümüze kadar birçok medeniyete ev sahipliği yapmıştır.
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1976D2', padding: 16 },
+  logo: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'white', marginRight: 12 },
+  headerText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  weatherCard: { backgroundColor: '#f9f9f9', margin: 16, borderRadius: 10, padding: 12, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4 },
+  weatherTitle: { fontSize: 14 },
+  weatherDegree: { fontSize: 24, fontWeight: 'bold' },
+  weatherInfo: { fontSize: 12, color: 'gray' },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginHorizontal: 16, marginTop: 16 },
+  quickAccess: { paddingLeft: 16, marginVertical: 10 },
+  quickCard: { alignItems: 'center', backgroundColor: '#f2f2f2', padding: 10, marginRight: 12, borderRadius: 10, width: 100 },
+  iconPlaceholder: { width: 40, height: 40, backgroundColor: '#ccc', borderRadius: 20, marginBottom: 5 },
+  quickText: { fontSize: 12, textAlign: 'center' },
+  promoImage: { width: '90%', height: 180, borderRadius: 10, alignSelf: 'center', marginVertical: 16 },
+  aboutSection: { paddingHorizontal: 16, paddingBottom: 20 },
+  aboutText: { fontSize: 14, color: '#333', marginTop: 8 },
+});

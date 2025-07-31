@@ -1,37 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  RefreshControl,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../styles/colors';
-import { commonStyles } from '../styles/commonStyles';
-import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
+import { supabase } from '../config/supabase';
+
+const { width } = Dimensions.get('window');
 
 const EventsScreen = ({ navigation }) => {
-  const [events, setEvents] = useState([]);
+  const [etkinlikler, setEtkinlikler] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchEvents();
+    fetchEtkinlikler();
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchEtkinlikler = async () => {
     try {
-      // Yeni etkinlikler tablosundan veri çek
+      setLoading(true);
       const { data, error } = await supabase
-        .from(TABLES.ETKINLIKLER)
+        .from('etkinlikler')
         .select('*')
-        .order(TABLE_COLUMNS.ETKINLIKLER.TARIH, { ascending: false });
+        .order('tarih', { ascending: true });
 
       if (error) {
-        console.error('Error fetching events:', error);
-        // Fallback to demo data if Supabase fails
-        setEvents(getDemoEvents());
+        console.error('Etkinlikler yüklenirken hata:', error);
+        setEtkinlikler(getDemoEvents());
       } else {
-        setEvents(data || getDemoEvents());
+        setEtkinlikler(data || getDemoEvents());
       }
     } catch (error) {
-      console.error('Error:', error);
-      setEvents(getDemoEvents());
+      console.error('Beklenmeyen hata:', error);
+      setEtkinlikler(getDemoEvents());
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -42,44 +51,48 @@ const EventsScreen = ({ navigation }) => {
     {
       id: 1,
       ad: 'Tire Kültür Festivali',
-      aciklama: 'Geleneksel el sanatları ve kültür etkinlikleri',
-      tarih: '2024-06-15',
-      adres: 'Tire Eski Belediye Binası',
+      aciklama: 'Geleneksel el sanatları, müzik ve dans gösterileri ile dolu kültür festivali',
       fotograf: null,
-      telefon_numarasi: '0232 123 45 67',
+      tarih: '2024-06-15',
+      enlem: 38.0895,
+      boylam: 27.7360,
+      telefon_numarasi: '0232 511 11 11',
       bilet_linki: null,
-      enlem: 38.0897,
-      boylam: 27.7358
+      adres: 'Tire Merkez Meydan'
     },
     {
       id: 2,
-      ad: 'Ramazan Etkinlikleri',
-      aciklama: 'İftar programları ve kültürel etkinlikler',
-      tarih: '2024-04-20',
-      adres: 'Tire Merkez',
+      ad: 'Tire Lokum Şenliği',
+      aciklama: 'Ünlü Tire lokumunun tanıtıldığı ve tadına bakıldığı şenlik',
       fotograf: null,
-      telefon_numarasi: '0232 123 45 68',
+      tarih: '2024-07-20',
+      enlem: 38.0892,
+      boylam: 27.7355,
+      telefon_numarasi: '0232 511 11 11',
       bilet_linki: null,
-      enlem: 38.0895,
-      boylam: 27.7355
+      adres: 'Tire Eski Belediye Meydanı'
     },
     {
       id: 3,
-      ad: 'Çevre Gününü Kutlama',
-      aciklama: 'Ağaç dikme ve çevre bilincini artırma etkinliği',
-      tarih: '2024-06-05',
-      adres: 'Tire Millet Bahçesi',
+      ad: 'Tarihi Tire Turu',
+      aciklama: 'Rehberli tarihi Tire turu ve müze ziyareti',
       fotograf: null,
-      telefon_numarasi: '0232 123 45 69',
+      tarih: '2024-08-10',
+      enlem: 38.0897,
+      boylam: 27.7358,
+      telefon_numarasi: '0232 511 11 11',
       bilet_linki: null,
-      enlem: 38.0900,
-      boylam: 27.7360
-    },
+      adres: 'Tire Müzesi'
+    }
   ];
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchEvents();
+    fetchEtkinlikler();
+  };
+
+  const onEventPress = (event) => {
+    navigation.navigate('EventDetail', { event });
   };
 
   const formatDate = (dateString) => {
@@ -87,209 +100,179 @@ const EventsScreen = ({ navigation }) => {
     return date.toLocaleDateString('tr-TR', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
+      year: 'numeric'
     });
   };
 
-  const EventCard = ({ event }) => (
-    <TouchableOpacity 
+  const renderEventCard = ({ item }) => (
+    <TouchableOpacity
       style={styles.eventCard}
-      onPress={() => navigation.navigate('EventDetail', { event })}
+      onPress={() => onEventPress(item)}
+      activeOpacity={0.8}
     >
       <View style={styles.eventImageContainer}>
-        {event.fotograf ? (
-          <Image source={{ uri: event.fotograf }} style={styles.eventImage} />
+        {item.fotograf ? (
+          <Image 
+            source={{ uri: item.fotograf }} 
+            style={styles.eventImage}
+            resizeMode="cover"
+          />
         ) : (
-          <View style={styles.eventImagePlaceholder}>
-            <Icon name="event" size={40} color={colors.primary} />
+          <View style={styles.placeholderImage}>
+            <Icon name="event" size={40} color="#ccc" />
           </View>
         )}
       </View>
       
       <View style={styles.eventContent}>
-        <Text style={styles.eventTitle}>{event.ad}</Text>
+        <View style={styles.eventHeader}>
+          <Text style={styles.eventTitle}>{item.ad}</Text>
+          <View style={styles.dateContainer}>
+            <Icon name="calendar-today" size={16} color="#2E5266" />
+            <Text style={styles.eventDate}>{formatDate(item.tarih)}</Text>
+          </View>
+        </View>
+        
         <Text style={styles.eventDescription} numberOfLines={2}>
-          {event.aciklama}
+          {item.aciklama}
         </Text>
         
-        <View style={styles.eventDetails}>
-          <View style={styles.detailRow}>
-            <Icon name="event" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{formatDate(event.tarih)}</Text>
-          </View>
-          
-          <View style={styles.detailRow}>
-            <Icon name="location-on" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{event.adres}</Text>
-          </View>
-          
-          {event.telefon_numarasi && (
-            <View style={styles.detailRow}>
-              <Icon name="phone" size={16} color={colors.primary} />
-              <Text style={styles.detailText}>{event.telefon_numarasi}</Text>
+        <View style={styles.eventFooter}>
+          {item.adres && (
+            <View style={styles.locationContainer}>
+              <Icon name="location-on" size={14} color="#666" />
+              <Text style={styles.locationText}>{item.adres}</Text>
             </View>
           )}
         </View>
-        
-        {event.bilet_linki && (
-          <View style={styles.ticketSection}>
-            <TouchableOpacity style={styles.ticketButton}>
-              <Icon name="confirmation-number" size={16} color={colors.white} />
-              <Text style={styles.ticketButtonText}>Bilet Al</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
     </TouchableOpacity>
   );
 
-  if (loading) {
-    return (
-      <View style={[commonStyles.container, commonStyles.centerContent]}>
-        <Text style={styles.loadingText}>Etkinlikler yükleniyor...</Text>
-      </View>
-    );
-  }
-
   return (
-    <View style={commonStyles.container}>
-      <ScrollView
-        style={styles.content}
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Etkinlikler</Text>
+      </View>
+
+      {/* Events List */}
+      <FlatList
+        data={etkinlikler}
+        renderItem={renderEventCard}
+        keyExtractor={(item) => item.id.toString()}
+        style={styles.eventsList}
+        contentContainerStyle={styles.eventsListContent}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      >
-        <View style={styles.header}>
-          <Icon name="event" size={32} color={colors.white} />
-          <Text style={styles.headerTitle}>Etkinlikler</Text>
-          <Text style={styles.headerSubtitle}>
-            Tire'deki güncel etkinlikler ve organizasyonlar
-          </Text>
-        </View>
-
-        <View style={styles.eventsSection}>
-          {events.length > 0 ? (
-            events.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))
-          ) : (
-            <View style={styles.emptyState}>
-              <Icon name="event" size={64} color={colors.gray} />
-              <Text style={styles.emptyStateText}>
-                Etkinlik bilgisi bulunamadı.
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1,
+    backgroundColor: '#f8f9fa',
   },
   header: {
-    padding: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: colors.white,
-    marginBottom: 4,
+    color: '#2E5266',
   },
-  headerSubtitle: {
-    fontSize: 16,
-    color: colors.white,
-    opacity: 0.9,
+  eventsList: {
+    flex: 1,
+  },
+  eventsListContent: {
+    padding: 16,
   },
   eventCard: {
-    backgroundColor: colors.white,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    ...commonStyles.shadow,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    marginBottom: 16,
   },
   eventImageContainer: {
-    marginRight: 12,
+    width: '100%',
+    height: 180,
   },
   eventImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+    width: '100%',
+    height: '100%',
   },
-  eventImagePlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: colors.background,
+  placeholderImage: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#e0e0e0',
     justifyContent: 'center',
     alignItems: 'center',
   },
   eventContent: {
-    flex: 1,
+    padding: 16,
+  },
+  eventHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
   eventTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 4,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2E5266',
+    flex: 1,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  eventDate: {
+    fontSize: 14,
+    color: '#2E5266',
+    fontWeight: '500',
+    marginLeft: 6,
   },
   eventDescription: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: '#666',
+    lineHeight: 20,
     marginBottom: 8,
   },
-  eventDetails: {
-    gap: 4,
-  },
-  detailRow: {
+  eventFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'space-between',
   },
-  detailText: {
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationText: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: '#666',
+    marginLeft: 4,
   },
-  ticketSection: {
-    marginTop: 12,
-    alignItems: 'center',
-  },
-  ticketButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  ticketButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 40,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginTop: 16,
+  separator: {
+    height: 12,
   },
 });
 
-export default EventsScreen; 
+export default EventsScreen;

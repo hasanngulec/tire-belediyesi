@@ -1,312 +1,325 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../styles/colors';
-import { commonStyles } from '../styles/commonStyles';
+import { supabase } from '../config/supabase';
 
-const MapScreen = () => {
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [mapReady, setMapReady] = useState(false);
+export default function MapScreen({ navigation }) {
+  const [places, setPlaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Tire city center coordinates
-  const tireCenter = {
-    latitude: 38.0851,
-    longitude: 27.7506,
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.02,
+  // Tire merkez koordinatları
+  const initialRegion = {
+    latitude: 38.0931,
+    longitude: 27.7519,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
   };
 
-  const poi = [
-    {
-      id: 1,
-      title: 'Tire Belediyesi',
-      description: 'Tire Belediye Binası',
-      latitude: 38.0851,
-      longitude: 27.7506,
-      type: 'government',
-    },
-    {
-      id: 2,
-      title: 'Tire Müzesi',
-      description: 'Tarihi müze',
-      latitude: 38.0845,
-      longitude: 27.7500,
-      type: 'museum',
-    },
-    {
-      id: 3,
-      title: 'Hacı Ömer Camii',
-      description: 'Tarihi cami',
-      latitude: 38.0855,
-      longitude: 27.7510,
-      type: 'mosque',
-    },
-    {
-      id: 4,
-      title: 'Tire Pazarı',
-      description: 'Geleneksel pazar yeri',
-      latitude: 38.0840,
-      longitude: 27.7520,
-      type: 'market',
-    },
+  const categories = [
+    { id: 'all', name: 'Tümü', color: '#2E5266', icon: 'place' },
+    { id: 'tarihi', name: 'Tarihi', color: '#8B4513', icon: 'account-balance' },
+    { id: 'kültürel', name: 'Kültürel', color: '#9C27B0', icon: 'palette' },
+    { id: 'yeme-içme', name: 'Yeme-İçme', color: '#FF5722', icon: 'restaurant' },
   ];
 
   useEffect(() => {
-    // Request location permission and get current location
-    requestLocationPermission();
+    fetchPlaces();
   }, []);
 
-  const requestLocationPermission = async () => {
+  const fetchPlaces = async () => {
     try {
-      // Note: In real app, implement proper location permission request
-      // For now, we'll use a default location
-      setCurrentLocation(tireCenter);
-      setMapReady(true);
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('gezi_noktalari')
+        .select('*');
+
+      if (error) {
+        console.error('Gezi noktaları alınırken hata:', error);
+        Alert.alert('Hata', 'Harita verileri yüklenemedi');
+        return;
+      }
+
+      setPlaces(data || []);
     } catch (error) {
-      console.error('Location permission error:', error);
-      Alert.alert(
-        'Konum Erişimi',
-        'Konum hizmetlerine erişim izni verilmedi. Harita Tire merkezi gösterilecek.',
-        [{ text: 'Tamam', onPress: () => setMapReady(true) }]
-      );
+      console.error('Harita fetch hatası:', error);
+      Alert.alert('Hata', 'Bir hata oluştu');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getMarkerIcon = (type) => {
-    switch (type) {
-      case 'government': return 'business';
-      case 'museum': return 'museum';
-      case 'mosque': return 'place-of-worship';
-      case 'market': return 'store';
-      default: return 'place';
-    }
+  const getMarkerColor = (category) => {
+    const categoryData = categories.find(cat => cat.id === category);
+    return categoryData ? categoryData.color : '#2E5266';
   };
 
-  const getMarkerColor = (type) => {
-    switch (type) {
-      case 'government': return colors.primary;
-      case 'museum': return '#5E35B1';
-      case 'mosque': return '#00ACC1';
-      case 'market': return '#FB8C00';
-      default: return colors.primary;
+  const getFilteredPlaces = () => {
+    if (selectedCategory === 'all') {
+      return places;
     }
+    return places.filter(place => place.kategori === selectedCategory);
   };
 
-  const centerOnLocation = () => {
-    if (currentLocation) {
-      // In real app, this would center the map on user's location
-      Alert.alert('Konum', 'Harita konumunuz üzerinde ortalandı.');
-    } else {
-      Alert.alert('Hata', 'Konum bilgisi alınamadı.');
-    }
-  };
-
-  const showDirections = (destination) => {
+  const handleMarkerPress = (place) => {
     Alert.alert(
-      'Yol Tarifi',
-      `${destination.title} için yol tarifi almak istiyor musunuz?`,
+      place.ad,
+      place.aciklama,
       [
-        { text: 'İptal', style: 'cancel' },
         {
-          text: 'Evet',
-          onPress: () => {
-            // In real app, open external maps app or show directions
-            console.log('Directions to:', destination.title);
-          }
-        }
+          text: 'İptal',
+          style: 'cancel',
+        },
+        {
+          text: 'Detayları Gör',
+          onPress: () => navigation.navigate('Tourism', {
+            screen: 'TourismSpotDetail',
+            params: { spot: place }
+          }),
+        },
       ]
     );
   };
 
-  if (!mapReady) {
+  const renderCategoryButton = (category) => (
+    <TouchableOpacity
+      key={category.id}
+      style={[
+        styles.categoryButton,
+        {
+          backgroundColor: selectedCategory === category.id ? category.color : 'white',
+          borderColor: category.color,
+        }
+      ]}
+      onPress={() => setSelectedCategory(category.id)}
+      activeOpacity={0.8}
+    >
+      <Icon
+        name={category.icon}
+        size={16}
+        color={selectedCategory === category.id ? 'white' : category.color}
+      />
+      <Text
+        style={[
+          styles.categoryButtonText,
+          {
+            color: selectedCategory === category.id ? 'white' : category.color,
+          }
+        ]}
+      >
+        {category.name}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
     return (
-      <View style={[commonStyles.container, commonStyles.centerContent]}>
-        <Icon name="map" size={64} color={colors.primary} />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2E5266" />
         <Text style={styles.loadingText}>Harita yükleniyor...</Text>
       </View>
     );
   }
 
   return (
-    <View style={commonStyles.container}>
-      {/* Map Placeholder - In real app, use react-native-maps */}
-      <View style={styles.mapContainer}>
-        <View style={styles.mapPlaceholder}>
-          <Icon name="map" size={64} color={colors.primary} />
-          <Text style={styles.mapPlaceholderText}>
-            Harita Görünümü
-          </Text>
-          <Text style={styles.mapPlaceholderSubtext}>
-            Tire Merkezi - {tireCenter.latitude.toFixed(4)}, {tireCenter.longitude.toFixed(4)}
+    <View style={styles.container}>
+      {/* Kategori Filtreleri */}
+      <View style={styles.categoryContainer}>
+        <View style={styles.categoryScroll}>
+          {categories.map(renderCategoryButton)}
+        </View>
+      </View>
+
+      {/* Harita */}
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        style={styles.map}
+        initialRegion={initialRegion}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        showsCompass={true}
+        showsScale={true}
+      >
+        {getFilteredPlaces().map((place) => (
+          <Marker
+            key={place.id}
+            coordinate={{
+              latitude: parseFloat(place.enlem),
+              longitude: parseFloat(place.boylam),
+            }}
+            title={place.ad}
+            description={place.aciklama}
+            onPress={() => handleMarkerPress(place)}
+            pinColor={getMarkerColor(place.kategori)}
+          />
+        ))}
+      </MapView>
+
+      {/* Alt Bilgi Paneli */}
+      <View style={styles.infoPanel}>
+        <View style={styles.infoPanelContent}>
+          <Icon name="info" size={20} color="#2E5266" />
+          <Text style={styles.infoPanelText}>
+            {getFilteredPlaces().length} konum gösteriliyor
           </Text>
         </View>
+        
+        <TouchableOpacity
+          style={styles.refreshButton}
+          onPress={fetchPlaces}
+          activeOpacity={0.8}
+        >
+          <Icon name="refresh" size={20} color="#2E5266" />
+        </TouchableOpacity>
+      </View>
 
-        {/* Floating Action Buttons */}
-        <View style={styles.fabContainer}>
-          <TouchableOpacity style={styles.fab} onPress={centerOnLocation}>
-            <Icon name="my-location" size={24} color={colors.white} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Map Legend */}
-        <View style={styles.legendContainer}>
-          <Text style={styles.legendTitle}>Harita Açıklaması</Text>
-          {[
-            { type: 'government', label: 'Belediye Binaları' },
-            { type: 'museum', label: 'Müzeler' },
-            { type: 'mosque', label: 'Camiler' },
-            { type: 'market', label: 'Pazar Yerleri' },
-          ].map((item, index) => (
-            <View key={index} style={styles.legendItem}>
-              <Icon
-                name={getMarkerIcon(item.type)}
-                size={16}
-                color={getMarkerColor(item.type)}
+      {/* Kategori Açıklaması */}
+      <View style={styles.legendContainer}>
+        <Text style={styles.legendTitle}>Kategori Renkleri:</Text>
+        <View style={styles.legendItems}>
+          {categories.slice(1).map((category) => (
+            <View key={category.id} style={styles.legendItem}>
+              <View
+                style={[
+                  styles.legendColor,
+                  { backgroundColor: category.color }
+                ]}
               />
-              <Text style={styles.legendText}>{item.label}</Text>
+              <Text style={styles.legendText}>{category.name}</Text>
             </View>
           ))}
         </View>
       </View>
-
-      {/* Points of Interest List */}
-      <View style={styles.poiContainer}>
-        <Text style={styles.poiTitle}>Önemli Noktalar</Text>
-        {poi.map((point) => (
-          <TouchableOpacity
-            key={point.id}
-            style={styles.poiItem}
-            onPress={() => showDirections(point)}
-          >
-            <View style={styles.poiIcon}>
-              <Icon
-                name={getMarkerIcon(point.type)}
-                size={20}
-                color={getMarkerColor(point.type)}
-              />
-            </View>
-            <View style={styles.poiContent}>
-              <Text style={styles.poiName}>{point.title}</Text>
-              <Text style={styles.poiDescription}>{point.description}</Text>
-            </View>
-            <Icon name="directions" size={20} color={colors.primary} />
-          </TouchableOpacity>
-        ))}
-      </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  mapContainer: {
-    flex: 2,
-    position: 'relative',
-  },
-  mapPlaceholder: {
+  container: {
     flex: 1,
-    backgroundColor: colors.lightGray,
+  },
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    backgroundColor: '#f8f9fa',
   },
-  mapPlaceholderText: {
-    fontSize: 18,
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+  categoryContainer: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    zIndex: 1,
+  },
+  categoryScroll: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  categoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginHorizontal: 2,
+  },
+  categoryButtonText: {
+    fontSize: 12,
     fontWeight: '600',
-    color: colors.text.primary,
-    marginTop: 12,
-    marginBottom: 4,
+    marginLeft: 4,
   },
-  mapPlaceholderSubtext: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    textAlign: 'center',
+  map: {
+    flex: 1,
   },
-  fabContainer: {
+  infoPanel: {
     position: 'absolute',
-    bottom: 16,
-    right: 16,
-  },
-  fab: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    ...commonStyles.shadow,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  infoPanelContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  infoPanelText: {
+    fontSize: 14,
+    color: '#2E5266',
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  refreshButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f0f8ff',
   },
   legendContainer: {
     position: 'absolute',
-    top: 16,
-    left: 16,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    padding: 12,
-    ...commonStyles.shadow,
+    top: 80,
+    right: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 10,
+    padding: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   legendTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text.primary,
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#2E5266',
     marginBottom: 8,
+  },
+  legendItems: {
+    gap: 4,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
-    gap: 8,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
   },
   legendText: {
-    fontSize: 12,
-    color: colors.text.secondary,
-  },
-  poiContainer: {
-    flex: 1,
-    backgroundColor: colors.white,
-    padding: 16,
-  },
-  poiTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 12,
-  },
-  poiItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: colors.background,
-  },
-  poiIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  poiContent: {
-    flex: 1,
-  },
-  poiName: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: colors.text.primary,
-    marginBottom: 2,
-  },
-  poiDescription: {
-    fontSize: 14,
-    color: colors.text.secondary,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    marginTop: 16,
+    fontSize: 10,
+    color: '#666',
   },
 });
 
-export default MapScreen; 
+

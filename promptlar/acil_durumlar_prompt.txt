@@ -1,0 +1,120 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt
+
+(Acil Durumlar Ekranı – EmergencyScreen.js)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda verilen .png ekran görüntüsünü ve teknik dokümana uygun olarak, React Native ile geliştirilmiş Acil Durumlar ekranının sadece UI (görsel arayüz) kısmını modern hale getir.
+
+⚠️ Supabase’den gelen verileri silme veya değiştirerek override etme.
+✅ Supabase verisi yoksa, aşağıda verilen örnek içerikleri geçici olarak göster.
+❌ Backend işlemleri ve navigasyon kodlarına müdahale etme.
+
+⸻
+
+📎 REFERANSLAR:
+	•	Görsel: acil_durumlar.png
+	•	Component: EmergencyScreen.js
+	•	Teknik Döküman:
+📄 /Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf
+(Bölüm: Ana Sayfa Hızlı Erişim → Acil Durumlar)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+🔴 Genel Uyarı Kartı
+	•	Başlık: Acil Durum?
+	•	Açıklama: Yaşamsal tehlike varsa derhal 112'yi arayın
+	•	Kırmızı buton: 112 - Acil Çağrı Merkezi
+
+⸻
+
+🚨 Acil Servisler (Grid halinde 2 sütun)
+
+Her kutuda:
+	•	Servis adı
+Örnekler:
+	•	İtfaiye
+	•	Polis
+	•	Ambulans
+	•	Jandarma
+	•	Acil numarası:
+	•	İtfaiye: 110
+	•	Polis: 155
+	•	Ambulans: 112
+	•	Jandarma: 156
+	•	Açıklama:
+	•	İtfaiye: Yangın, kaza ve acil kurtarma
+	•	Polis: Güvenlik ve asayiş olayları
+	•	vb.
+	•	Renkli ikon (daire içi)
+
+⸻
+
+🟢 Belediye Acil Hizmetler (Kart listesi)
+
+Her kartta:
+	•	Servis adı
+Örnek: Belediye Acil, Su Arızası
+	•	Telefon numarası
+Örnek: (0312) 555 0000
+	•	Açıklama (örnek: Su kesintisi, yol sorunu...)
+	•	Sağ üst köşede: 7/24 yeşil etiket
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Veri çekme ve navigasyon yapısına dokunma.
+	2.	Veri yoksa aşağıdaki gibi örnek içerikler kullanabilirsin:
+
+{
+  emergencyCall: {
+    message: "Yaşamsal tehlike varsa derhal 112'yi arayın",
+    number: "112"
+  },
+  services: [
+    { name: "İtfaiye", number: "110", description: "Yangın, kaza ve acil kurtarma" },
+    { name: "Polis", number: "155", description: "Güvenlik ve asayiş olayları" },
+    { name: "Ambulans", number: "112", description: "Sağlık acil durumları" },
+    { name: "Jandarma", number: "156", description: "Kırsal alan güvenliği" }
+  ],
+  municipal: [
+    {
+      title: "Belediye Acil",
+      phone: "(0312) 555 0000",
+      description: "Su kesintisi, elektrik arızası, yol sorunları",
+      available: "7/24"
+    },
+    {
+      title: "Su Arızası",
+      phone: "(0312) 555 0001",
+      description: "İçme suyu hattı acil müdahale",
+      available: "7/24"
+    }
+  ]
+}
+
+	3.	UI sadece StyleSheet üzerinden güncellenmeli:
+	•	Grid yapısı (2 sütun)
+	•	Kartlar arasında yeterli boşluk
+	•	Renkli butonlar ve etiketler (7/24)
+	•	Yazı font ağırlıkları .png ile uyumlu
+	4.	React Native bileşenleri kullanılmalı:
+	•	View, Text, ScrollView, TouchableOpacity, Image veya ikonlar
+	•	Button yerine TouchableOpacity + özel stil tercih edilebilir
+	5.	Alt menü sabit ve görünür olmalı
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ EmergencyScreen.js component dosyası
+	•	✅ Supabase verisi varsa onu gösterir, yoksa örnek içerikleri
+	•	✅ UI, acil_durumlar.png tasarımına ve analiz dokümanına birebir uyumlu olur
+
+⸻

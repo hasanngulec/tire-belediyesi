@@ -51,6 +51,9 @@ function HomeStackNavigator() {
       <Stack.Screen name="Emergency" component={EmergencyScreen} options={{ title: 'Acil Durumlar' }} />
       <Stack.Screen name="DutyPharmacies" component={DutyPharmaciesScreen} options={{ title: 'Nöbetçi Eczaneler' }} />
       <Stack.Screen name="Contact" component={ContactScreen} options={{ title: 'Bize Ulaşın' }} />
+      <Stack.Screen name="HowToGetThere" component={HowToGetThereScreen} options={{ title: 'Nasıl Gelinir' }} />
+      <Stack.Screen name="TravelRoutes" component={TravelRoutesScreen} options={{ title: 'Gezi Rotaları' }} />
+      <Stack.Screen name="InfluencerRoutes" component={InfluencerRoutesScreen} options={{ title: 'Influencer Rota Önerileri' }} />
     </Stack.Navigator>
   );
 }
@@ -124,12 +127,12 @@ function TabNavigator() {
 
           if (route.name === 'Home') {
             iconName = 'home';
-          } else if (route.name === 'Events') {
-            iconName = 'event';
-          } else if (route.name === 'Tourism') {
-            iconName = 'place';
           } else if (route.name === 'Map') {
             iconName = 'map';
+          } else if (route.name === 'Tourism') {
+            iconName = 'place';
+          } else if (route.name === 'Events') {
+            iconName = 'event';
           }
 
           return <Icon name={iconName} size={size} color={color} />;
@@ -139,9 +142,9 @@ function TabNavigator() {
         headerShown: false,
       })}>
       <Tab.Screen name="Home" component={HomeStackNavigator} options={{ title: 'Ana Sayfa' }} />
-      <Tab.Screen name="Events" component={EventsStackNavigator} options={{ title: 'Etkinlikler' }} />
-      <Tab.Screen name="Tourism" component={TourismStackNavigator} options={{ title: 'Turizm' }} />
       <Tab.Screen name="Map" component={MapStackNavigator} options={{ title: 'Harita' }} />
+      <Tab.Screen name="Tourism" component={TourismStackNavigator} options={{ title: 'Gezi Noktaları' }} />
+      <Tab.Screen name="Events" component={EventsStackNavigator} options={{ title: 'Etkinlikler' }} />
     </Tab.Navigator>
   );
 }

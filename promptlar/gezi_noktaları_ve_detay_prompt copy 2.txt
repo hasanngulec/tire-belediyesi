@@ -1,0 +1,68 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt (Gezi Noktaları + Detay Ekranı)
+
+🎯 GÖREV:
+
+Sen bir React Native UI geliştiricisisin. Elimde halihazırda çalışan bir mobil uygulama var. Bu uygulama Supabase’den veri alıyor ve “Gezi Noktaları” ile “Gezi Noktası Detayı” ekranlarında bu verileri gösteriyor.
+
+Senin görevin, bu ekranların sadece UI (görsel tasarımını) düzenlemek. Mevcut verileri değiştirmeyeceksin, silmeyeceksin, sabit yazı ile değiştirmeyeceksin.
+
+⸻
+
+📎 REFERANSLAR:
+	•	Uygulamanın canlı ekran çıktısı:
+	•	gezi_noktalari.png (liste ekranı)
+	•	gezi_noktasi_detay.png (detay ekranı)
+	•	Teknik doküman: Tire Belediyesi Mobil Uygulama Sistem Bileşenleri
+
+⸻
+
+📋 GEZİ NOKTALARI EKRANI (Liste Ekranı)
+	•	Başlık: “Gezi Noktaları”
+	•	Kategori sekmeleri: “Tarihi”, “Kültürel”, “Yeme-İçme”
+	•	Aktif kategori mavi alt çizgi ve ikon ile vurgulanmış.
+	•	Kart yapısı:
+	•	Başlık (örnek: “deneme”)
+	•	Açıklama (örnek: “den”)
+	•	Konum bilgisi (örnek: 📍te)
+	•	Sağ tarafta tıklanabilir yön simgesi (➔)
+	•	Kartlar supabase’den gelen veriye göre listeleniyor.
+	•	Bu veriyi değiştirme! UI’da bu veriyi olduğu gibi göster, sadece tasarımını düzenle.
+
+⸻
+
+📋 GEZİ NOKTASI DETAY EKRANI
+	•	Sayfa başlığı: “Gezi Noktası Detayı”
+	•	İçerik bileşenleri:
+	•	Başlık (örnek: deneme)
+	•	Kategori etiketi (chip, örnek: tarihi)
+	•	Açıklama metni
+	•	Adres ve telefon alanları (ikonlu bilgi kutuları)
+	•	İki adet buton: “Yol Tarifi” (primary), “Ara” (outline)
+	•	Yalnızca tasarımın stilini düzenle. Supabase’den gelen “deneme, te, 20” gibi örnek veriler korunmalı.
+
+⸻
+
+⚠️ KURALLAR:
+	•	Supabase ile gelen verileri asla değiştirme veya silme (örnek: “deneme”, “te”, “20”).
+	•	fetch, query, getData gibi fonksiyonlar korunmalı.
+	•	Sadece UI component yapısını ve stilleri güncelle. Görsel düzenlemede şunlara dikkat et:
+	•	Kartların kenarları daha yumuşak (borderRadius)
+	•	Tipografi tutarlı (başlık bold, açıklama normal)
+	•	Boşluklar ve hizalamalar profesyonel
+	•	Kategori chip’leri renkli ve ikonlu olabilir
+	•	Kodun sadece tasarım (React Native StyleSheet) kısmı güncellenmeli.
+
+⸻
+
+🤖 OUTPUT BEKLENTİSİ:
+	•	Güncellenmiş ama veriye dokunulmamış React Native component kodu
+	•	UI bileşenleri görsel tasarıma uyumlu
+	•	Her ekran için birer ayrı component (GeziNoktalariScreen, GeziNoktasiDetayScreen)
+
+⸻
+
+İPUCU:
+Lütfen sadece UI görünümünü .png görsellerine göre iyileştir. Backend bağlantıları, veriler veya API endpoint’leri senin görevin değil. UI’ı modernleştir, ama içerik sabit kalsın.

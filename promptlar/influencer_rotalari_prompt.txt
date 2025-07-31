@@ -1,0 +1,136 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt
+
+(Influencer Rotaları Ekranı – InfluencerRoutesScreen.js)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda verilen .png görseline ve analiz dokümanına dayanarak, React Native ile geliştirilmiş mobil uygulamanın Influencer Rotaları ekranının yalnızca UI (tasarım) kısmını modernize et.
+
+⚠️ Supabase’den gelen verileri silme, değiştirme veya override etme.
+ℹ️ Eğer veri gelmezse, aşağıdaki örnek içerikleri placeholder olarak kullan.
+❌ Backend mantığına, navigasyona veya veri çekme yapısına müdahale etme.
+
+⸻
+
+📎 REFERANSLAR:
+	•	Görsel: influencer_rota_onerileri.png
+	•	Component: InfluencerRoutesScreen.js
+	•	İş Planı Dokümanı:
+📄 /Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf
+(Bölüm: Ana Sayfa Hızlı Erişim → Influencer Rotaları)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+🎯 Başlık ve Açıklama
+	•	Sayfa başlığı: Influencer Rotaları
+	•	Açıklama: Popüler içerik üreticilerinin önerdiği rotalar
+
+⸻
+
+💡 Özel İpucu Kartı
+	•	İkon: yıldız veya ampul
+	•	Açıklama: "Her influencer'ın kendi deneyimlerine dayalı özel tavsiyeleri var..."
+	•	Kart stili: Açık mor arka plan + yıldız ikonu
+
+⸻
+
+👤 Influencer Kartı
+
+Her kart aşağıdaki yapıyı içerir:
+	•	Profil:
+	•	Profil resmi (yuvarlak)
+	•	İsim: “Gezgin Ayşe”
+	•	Kullanıcı adı: @gezginayse
+	•	Takipçi sayısı: 125K takipçi
+	•	Kategori: Tarih ve Kültür
+	•	Takip Et butonu (mor)
+
+⸻
+
+📍 Rota Detayı
+	•	Rota Adı: Tarihi Dokular Rotası
+	•	Açıklama: Şehrimizin en güzel tarihi mekanlarını keşfedin
+	•	Süre: 4-5 saat, Mesafe: 3.2 km
+	•	Zorluk etiketi: Orta (sarı chip)
+	•	Puan: ⭐ 4.8
+
+⸻
+
+✨ Öne Çıkanlar (Madde İşaretli)
+	•	“Tarihi Ulu Cami’nin gizli detayları”
+	•	“Geleneksel Çarşı’da fotoğraf noktaları”
+	•	“Antik Kale’den panoramik manzara”
+	•	“Tarihi Hamam’ın mimari güzellikleri”
+
+⸻
+
+💬 Tavsiye Kutusu
+	•	Başlık: Gezgin Ayşe'in Tavsiyeleri
+	•	İçerik: 2–3 maddelik mor renkte kutular içerisinde ipuçları
+
+⸻
+
+🟣 Buton
+	•	Rotayı Başlat (mor buton – call to action)
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Veri yapısı ve veri çekme mekanizmasına dokunma.
+	2.	Eğer veri yoksa şu örnek veriler placeholder olarak kullanılabilir:
+
+{
+  influencer: {
+    name: "Gezgin Ayşe",
+    username: "@gezginayse",
+    followers: "125K takipçi",
+    category: "Tarih ve Kültür",
+    image: "https://via.placeholder.com/100",
+    isFollowing: false
+  },
+  route: {
+    title: "Tarihi Dokular Rotası",
+    description: "Şehrimizin en güzel tarihi mekanlarını keşfedin",
+    duration: "4-5 saat",
+    distance: "3.2 km",
+    difficulty: "Orta",
+    rating: 4.8,
+    highlights: [
+      "Tarihi Ulu Cami'nin gizli detayları",
+      "Geleneksel Çarşı’da fotoğraf noktaları",
+      "Antik Kale'den panoramik manzara"
+    ],
+    tips: [
+      "Sabah erken saatlerde başlayın, ışık daha güzel",
+      "Tarihi Hamam’da rehberli tur mutlaka alın",
+      "Çarşı’da yerel ustalarla sohbet etmeyi unutmayın"
+    ]
+  }
+}
+
+	3.	UI iyileştirmeleri yalnızca StyleSheet üzerinden yapılmalı:
+	•	Kart tasarımı
+	•	Chip ve buton renkleri
+	•	Başlık ve alt başlık font boyutu
+	•	Boşluklar, hizalama, ikon konumu
+	4.	React Native bileşenleriyle çalış:
+	•	View, Text, Image, TouchableOpacity, ScrollView, FlatList
+	•	(İsteğe bağlı: yıldız puanı göstermek için ikon veya özel component)
+	5.	Alt menü görünür ve sabit kalmalı
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ InfluencerRoutesScreen.js React Native component
+	•	✅ Supabase verisi varsa onu gösterir, yoksa örnek içerik
+	•	✅ Görsel olarak influencer_rota_onerileri.png tasarımıyla uyumludur
+	•	✅ Teknik dokümana %100 uyumludur
+
+⸻

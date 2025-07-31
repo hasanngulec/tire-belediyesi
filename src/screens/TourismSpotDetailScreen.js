@@ -1,45 +1,20 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity, Linking } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Linking,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../styles/colors';
-import { commonStyles } from '../styles/commonStyles';
+
+const { width } = Dimensions.get('window');
 
 const TourismSpotDetailScreen = ({ route, navigation }) => {
   const { spot } = route.params;
-
-  const getCategoryIcon = (kategori) => {
-    switch (kategori?.toLowerCase()) {
-      case 'tarihi yapı':
-        return 'account-balance';
-      case 'müze':
-        return 'museum';
-      case 'dini yapı':
-        return 'mosque';
-      case 'kültürel':
-        return 'culture';
-      case 'doğa':
-        return 'park';
-      default:
-        return 'place';
-    }
-  };
-
-  const getCategoryColor = (kategori) => {
-    switch (kategori?.toLowerCase()) {
-      case 'tarihi yapı':
-        return '#8B4513';
-      case 'müze':
-        return '#4A90E2';
-      case 'dini yapı':
-        return '#7B68EE';
-      case 'kültürel':
-        return '#FF6B35';
-      case 'doğa':
-        return '#4CAF50';
-      default:
-        return colors.primary;
-    }
-  };
 
   const openPhone = (phoneNumber) => {
     if (phoneNumber) {
@@ -49,246 +24,284 @@ const TourismSpotDetailScreen = ({ route, navigation }) => {
 
   const openMaps = () => {
     if (spot.enlem && spot.boylam) {
-      const url = `https://www.google.com/maps?q=${spot.enlem},${spot.boylam}`;
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${spot.enlem},${spot.boylam}`;
       Linking.openURL(url);
     }
   };
 
+  const getCategoryColor = (kategori) => {
+    switch (kategori?.toLowerCase()) {
+      case 'tarihi':
+        return '#8B4513';
+      case 'kültürel':
+        return '#FF6B35';
+      case 'yeme-içme':
+        return '#4CAF50';
+      default:
+        return '#2E5266';
+    }
+  };
+
   return (
-    <View style={commonStyles.container}>
-      <ScrollView style={styles.content}>
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Icon name="arrow-back" size={24} color={colors.white} />
-          </TouchableOpacity>
-          
-          <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>{spot.ad}</Text>
-            <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(spot.kategori) }]}>
-              <Icon name={getCategoryIcon(spot.kategori)} size={16} color={colors.white} />
-              <Text style={styles.categoryText}>{spot.kategori}</Text>
-            </View>
+    <ScrollView style={styles.container}>
+      {/* Header Image */}
+      <View style={styles.imageContainer}>
+        {spot.fotograf ? (
+          <Image 
+            source={{ uri: spot.fotograf }} 
+            style={styles.headerImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.placeholderImage}>
+            <Icon name="place" size={80} color="#ccc" />
+            <Text style={styles.placeholderText}>Fotoğraf Yok</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Content */}
+      <View style={styles.content}>
+        {/* Title and Category */}
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>{spot.ad}</Text>
+          <View style={[styles.categoryChip, { backgroundColor: getCategoryColor(spot.kategori) }]}>
+            <Text style={styles.categoryChipText}>{spot.kategori}</Text>
           </View>
         </View>
 
-        <View style={styles.imageContainer}>
-          {spot.fotograf ? (
-            <Image source={{ uri: spot.fotograf }} style={styles.spotImage} />
-          ) : (
-            <View style={styles.imagePlaceholder}>
-              <Icon name={getCategoryIcon(spot.kategori)} size={64} color={colors.primary} />
+        {/* Description */}
+        <View style={styles.descriptionSection}>
+          <Text style={styles.description}>{spot.aciklama}</Text>
+        </View>
+
+        {/* Info Section */}
+        <View style={styles.infoSection}>
+          {/* Address Info */}
+          {spot.adres && (
+            <View style={styles.infoRow}>
+              <View style={styles.iconContainer}>
+                <Icon name="location-on" size={20} color="#1976D2" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Adres</Text>
+                <Text style={styles.infoValue}>{spot.adres}</Text>
+              </View>
+            </View>
+          )}
+
+          {/* Phone Info */}
+          {spot.telefon_numarasi && (
+            <TouchableOpacity 
+              style={styles.infoRow}
+              onPress={() => openPhone(spot.telefon_numarasi)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="phone" size={20} color="#1976D2" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Telefon</Text>
+                <Text style={[styles.infoValue, styles.phoneValue]}>
+                  {spot.telefon_numarasi}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+
+          {/* Opening Hours */}
+          {spot.acilis_saati && spot.kapanis_saati && (
+            <View style={styles.infoRow}>
+              <View style={styles.iconContainer}>
+                <Icon name="access-time" size={20} color="#1976D2" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Açılış Saatleri</Text>
+                <Text style={styles.infoValue}>
+                  {spot.acilis_saati} - {spot.kapanis_saati}
+                </Text>
+              </View>
             </View>
           )}
         </View>
 
-        <View style={styles.detailsContainer}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📋 Hakkında</Text>
-            <Text style={styles.description}>{spot.aciklama}</Text>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📍 Konum</Text>
-            <View style={styles.locationInfo}>
-              <Icon name="location-on" size={20} color={colors.primary} />
-              <Text style={styles.locationText}>{spot.adres}</Text>
-            </View>
-            
-            {(spot.enlem && spot.boylam) && (
-              <TouchableOpacity style={styles.mapButton} onPress={openMaps}>
-                <Icon name="map" size={16} color={colors.white} />
-                <Text style={styles.mapButtonText}>Haritada Göster</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🕒 Çalışma Saatleri</Text>
-            <View style={styles.hoursInfo}>
-              <Icon name="access-time" size={20} color={colors.primary} />
-              <Text style={styles.hoursText}>
-                {spot.acilis_saati} - {spot.kapanis_saati}
-              </Text>
-            </View>
-          </View>
+        {/* Action Buttons */}
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity 
+            style={styles.primaryButton}
+            onPress={openMaps}
+            activeOpacity={0.8}
+          >
+            <Icon name="directions" size={22} color="white" />
+            <Text style={styles.primaryButtonText}>Yol Tarifi</Text>
+          </TouchableOpacity>
 
           {spot.telefon_numarasi && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>📞 İletişim</Text>
-              <TouchableOpacity 
-                style={styles.phoneButton}
-                onPress={() => openPhone(spot.telefon_numarasi)}
-              >
-                <Icon name="phone" size={16} color={colors.white} />
-                <Text style={styles.phoneButtonText}>{spot.telefon_numarasi}</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity 
+              style={styles.secondaryButton}
+              onPress={() => openPhone(spot.telefon_numarasi)}
+              activeOpacity={0.8}
+            >
+              <Icon name="phone" size={22} color="#1976D2" />
+              <Text style={styles.secondaryButtonText}>Ara</Text>
+            </TouchableOpacity>
           )}
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>💡 Ziyaret İpuçları</Text>
-            <View style={styles.tipsList}>
-              <Text style={styles.tipText}>• En iyi fotoğraflar için sabah erken saatlerde gidin</Text>
-              <Text style={styles.tipText}>• Çalışma saatlerini kontrol edin</Text>
-              <Text style={styles.tipText}>• Fotoğraf çekmek için izin alın</Text>
-              <Text style={styles.tipText}>• Yerel rehberlerden bilgi alın</Text>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🎯 Yakındaki Yerler</Text>
-            <View style={styles.nearbyList}>
-              <Text style={styles.nearbyText}>• Tire Müzesi (500m)</Text>
-              <Text style={styles.nearbyText}>• Hacı Ömer Camii (300m)</Text>
-              <Text style={styles.nearbyText}>• Tire Pazarı (800m)</Text>
-              <Text style={styles.nearbyText}>• Millet Bahçesi (1.2km)</Text>
-            </View>
-          </View>
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1,
-  },
-  header: {
-    backgroundColor: colors.primary,
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerContent: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.white,
-    marginBottom: 8,
-  },
-  categoryBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-    gap: 4,
-  },
-  categoryText: {
-    fontSize: 12,
-    color: colors.white,
-    fontWeight: '600',
+    backgroundColor: '#f8f9fa',
   },
   imageContainer: {
-    height: 200,
-    backgroundColor: colors.background,
+    width: '100%',
+    height: 280,
   },
-  spotImage: {
+  headerImage: {
     width: '100%',
     height: '100%',
   },
-  imagePlaceholder: {
+  placeholderImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: colors.primaryLight,
+    backgroundColor: '#e8f4f8',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  detailsContainer: {
-    padding: 16,
+  placeholderText: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
   },
-  section: {
-    marginBottom: 24,
+  content: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    marginTop: -24,
+    paddingTop: 24,
+    paddingHorizontal: 20,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
+  titleSection: {
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#2E5266',
     marginBottom: 12,
+    lineHeight: 32,
+  },
+  categoryChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+  },
+  categoryChipText: {
+    fontSize: 12,
+    color: 'white',
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+  },
+  descriptionSection: {
+    marginBottom: 32,
   },
   description: {
     fontSize: 16,
-    color: colors.text.secondary,
-    lineHeight: 24,
+    lineHeight: 26,
+    color: '#555',
+    textAlign: 'left',
   },
-  locationInfo: {
+  infoSection: {
+    marginBottom: 32,
+  },
+  infoRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
+    alignItems: 'flex-start',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  locationText: {
-    fontSize: 16,
-    color: colors.text.primary,
-    marginLeft: 8,
+  iconContainer: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#e3f2fd',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  infoContent: {
     flex: 1,
   },
-  mapButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+  infoLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  infoValue: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  phoneValue: {
+    color: '#1976D2',
+    textDecorationLine: 'underline',
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 32,
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: '#1976D2',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    paddingVertical: 16,
+    borderRadius: 12,
+    elevation: 3,
+    shadowColor: '#1976D2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
-  mapButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  hoursInfo: {
+  secondaryButton: {
+    flex: 1,
+    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#1976D2',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  hoursText: {
+  primaryButtonText: {
+    color: 'white',
     fontSize: 16,
-    color: colors.text.primary,
+    fontWeight: 'bold',
     marginLeft: 8,
   },
-  phoneButton: {
-    backgroundColor: colors.success,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  phoneButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  tipsList: {
-    gap: 8,
-  },
-  tipText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
-  },
-  nearbyList: {
-    gap: 8,
-  },
-  nearbyText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
+  secondaryButtonText: {
+    color: '#1976D2',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
 
-export default TourismSpotDetailScreen; 
+export default TourismSpotDetailScreen;

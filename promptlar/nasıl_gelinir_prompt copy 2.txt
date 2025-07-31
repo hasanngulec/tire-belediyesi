@@ -1,0 +1,109 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt (Nasıl Gelinir Ekranı)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda verilen .png görselini ve analiz dokümanını temel alarak, React Native ile geliştirilmiş mobil uygulamanın “Nasıl Gelinir” ekranının yalnızca UI (tasarım) katmanını modernize et.
+
+Supabase’den gelen veriler varsa, onları kullan.
+Veri gelmiyorsa örnek içerikleri (placeholder) geçici olarak yerleştirebilirsin.
+Backend, veri yapısı ve mantık akışına dokunma.
+
+⸻
+
+📎 REFERANSLAR:
+	•	nasil_gelinir.png: Ekran görüntüsü
+	•	İş Planı Dökümanı: “/Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf”
+(Bölüm 2 – Ana Sayfa Hızlı Erişim → Nasıl Gelinir Detay Ekranı)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+Sayfa Başlığı ve Açıklama
+	•	Başlık: Nasıl Gelinir
+	•	Alt metin: X Belediyesi merkez binasına ulaşım seçenekleri
+
+⸻
+
+1. Adres Bilgisi Kutusu
+	•	Başlık: Adres
+	•	Açıklama: Cumhuriyet Mahallesi, Belediye Caddesi No:1, 06000 Merkez
+	•	Aksiyon butonu: Haritada Göster (primary button)
+
+⸻
+
+2. Ulaşım Kartları (ScrollView içinde olabilir)
+Her ulaşım seçeneği kutu/kart şeklindedir. Kenarları yuvarlatılmış, gölgeli kart tasarımı önerilir:
+
+🚍 Otobüs
+	•	Açıklama: Şehir merkezi otobüs hatları ile kolayca ulaşabilirsiniz
+	•	Detay:
+	•	12, 23, 45 numaralı otobüsler
+	•	Her 15 dakikada bir sefer
+	•	Bilet ücreti: 3.50 TL
+
+🚗 Özel Araç
+	•	Açıklama: Merkez konumunda otopark imkanı mevcuttur
+	•	Detay:
+	•	Ücretsiz otopark
+	•	200 araç kapasiteli
+	•	7/24 güvenlik
+
+🚶‍♂️ Yürüyerek
+	•	Açıklama: Şehir merkezinden sadece 10 dakika yürüme mesafesi
+	•	Detay:
+	•	Yaya yolları mevcut
+	•	Engelli erişimi
+	•	Güvenli güzergah
+
+⸻
+
+⚠️ KURALLAR:
+	•	Veri yapısını ve fetch fonksiyonlarını değiştirme.
+	•	Supabase’den veri gelmiyorsa, aşağıdaki örnek içerikleri placeholder olarak kullanabilirsin:
+
+{
+  address: "Cumhuriyet Mahallesi, Belediye Caddesi No:1, 06000 Merkez",
+  transportation: [
+    {
+      type: "Otobüs",
+      icon: "bus",
+      description: "Şehir merkezi otobüs hatları ile kolayca ulaşabilirsiniz",
+      details: ["12, 23, 45 numaralı otobüsler", "Her 15 dakikada bir sefer", "Bilet ücreti: 3.50 TL"]
+    },
+    {
+      type: "Özel Araç",
+      icon: "car",
+      description: "Merkez konumunda otopark imkanı mevcuttur",
+      details: ["Ücretsiz otopark", "200 araç kapasiteli", "7/24 güvenlik"]
+    },
+    {
+      type: "Yürüyerek",
+      icon: "walk",
+      description: "Şehir merkezinden sadece 10 dakika yürüme mesafesi",
+      details: ["Yaya yolları mevcut", "Engelli erişimi", "Güvenli güzergah"]
+    }
+  ]
+}
+
+
+	•	Sadece StyleSheet kullanarak görsel düzenleme yap:
+	•	Kart kenarları, margin, padding, ikon hizalama
+	•	Font ağırlıkları, renkler
+	•	Buton stili (primary: mavi dolu)
+	•	TouchableOpacity, View, Text, ScrollView, Image gibi React Native bileşenlerini kullan.
+	•	Navigasyon ve veri bağlantısı kodlarına dokunma.
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ screens klasorunde yer alan HowToGetThereScreen.js isminde bir React Native component
+	•	✅ Supabase verisi varsa onları kullanır, yoksa örnek verileri gösterir
+	•	✅ UI güncel ve .png tasarımına uygun hale getirilmiştir
+
+⸻

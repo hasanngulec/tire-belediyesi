@@ -1,0 +1,116 @@
+
+⸻
+
+✅ Yapay Zeka için Final Prompt
+
+(Gezi Rotaları Ekranı – TravelRoutesScreen.js)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda verilen .png ekran görüntüsünü ve analiz dokümanını temel alarak, React Native ile geliştirilmiş mobil uygulamanın Gezi Rotaları ekranının yalnızca tasarımını güncelle.
+
+❗ Supabase üzerinden gelen verileri koru,
+❗ Supabase verisi gelmezse, örnek içerikleri geçici olarak göster.
+❗ Veri yapısına ve fetch mantığına müdahale etme.
+
+⸻
+
+📎 REFERANSLAR:
+	•	gezi_rotalari.png: Gezi Rotaları ekran görüntüsü
+	•	Component: TravelRoutesScreen.js
+	•	Analiz Dökümanı:
+📄 “/Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf”
+(Bölüm: 2. Ana Sayfa Hızlı Erişim → Gezi Rotaları)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+🧭 Üst Bilgi:
+	•	Başlık: Gezi Rotaları
+	•	Alt başlık: Şehrimizi keşfetmek için önerilen rotalar
+
+💡 Öneriler Kutusu:
+	•	İkon: ampul
+	•	Açıklama: "Rotaları takip ederken rahat ayakkabı giyin ve su şişenizi yanınıza alın."
+	•	Bilgilendirme stili: açık mavi kutu
+
+⸻
+
+📋 Rota Kartları (her biri kart yapısında)
+
+Her rota kartı aşağıdaki alt yapıya sahiptir:
+	•	Rota Adı (örnek: Tarihi Tur Rotası)
+	•	Açıklama (örnek: Şehrimizin tarihi yerlerini keşfedin)
+	•	Zorluk seviyesi etiketi (chip):
+	•	Kolay (yeşil)
+	•	Orta (sarı)
+	•	Süre + Mesafe (örnek: 3-4 saat, 2.5 km)
+	•	Duraklar (chip veya küçük etiket şeklinde)
+	•	Örnek: “Tarihi Ulu Cami”, “Antik Kale”, vb.
+
+⸻
+
+📥 Aksiyon Butonları:
+	•	Harita İndir (mavi buton)
+	•	Rehber Talep Et (gri outline buton)
+
+📌 Alt Menü:
+	•	Gezi Rotaları sekmesi aktif
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Veri yapısını koru. Supabase ile gelen rotaları ve durakları değiştirme.
+	2.	Veri yoksa örnek verileri kullan:
+
+[
+  {
+    name: "Tarihi Tur Rotası",
+    description: "Şehrimizin tarihi yerlerini keşfedin",
+    duration: "3-4 saat",
+    distance: "2.5 km",
+    difficulty: "Kolay",
+    stops: ["Tarihi Ulu Cami", "Antik Kale", "Tarihi Hamam"],
+    color: "#f44336"
+  },
+  {
+    name: "Kültür ve Sanat Rotası",
+    description: "Kültürel mekanları ziyaret edin",
+    duration: "2-3 saat",
+    distance: "1.8 km",
+    difficulty: "Kolay",
+    stops: ["Kültür Merkezi", "Sanat Galerisi", "Amfi Tiyatro"],
+    color: "#3f51b5"
+  },
+  {
+    name: "Lezzet Rotası",
+    description: "Yerel lezzetleri tadın",
+    duration: "4-5 saat",
+    distance: "3.2 km",
+    difficulty: "Orta",
+    stops: ["Yerel Lezzet Evi", "Tatlı Dükkanı", "Pazar Yeri"],
+    color: "#4caf50"
+  }
+]
+
+	3.	Yalnızca UI düzenlemesi yap:
+	•	Kart tasarımı, ikonlar, etiketler, spacing, renk kodları
+	•	Font stil, ağırlık ve büyüklükleri
+	•	Buton yapısı ve yerleşimi (primary / outline)
+	•	ScrollView veya FlatList ile kartları kaydırılabilir yap
+	4.	React Native bileşenleri kullan:
+	•	View, Text, ScrollView, Image, TouchableOpacity, FlatList, Chip (opsiyonel)
+	5.	Alt menü görünür ve aktif sekme vurgulanmış olmalı
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ TravelRoutesScreen.js component dosyası
+	•	✅ Supabase verisi varsa onu kullanır, yoksa örnek verileri gösterir
+	•	✅ UI, gezi_rotalari.png görseliyle birebir uyumlu olur
+	•	✅ İş planı dökümanına %100 uyumlu şekilde hazırlanır
+
+⸻

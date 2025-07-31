@@ -1,19 +1,26 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity, Linking } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Linking,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../styles/colors';
-import { commonStyles } from '../styles/commonStyles';
+
+const { width } = Dimensions.get('window');
 
 const EventDetailScreen = ({ route, navigation }) => {
   const { event } = route.params;
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
+  const openMaps = () => {
+    if (event.enlem && event.boylam) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${event.enlem},${event.boylam}`;
+      Linking.openURL(url);
+    }
   };
 
   const openPhone = (phoneNumber) => {
@@ -22,252 +29,265 @@ const EventDetailScreen = ({ route, navigation }) => {
     }
   };
 
-  const openTicketLink = (ticketLink) => {
-    if (ticketLink) {
-      Linking.openURL(ticketLink);
-    }
-  };
-
-  const openMaps = () => {
-    if (event.enlem && event.boylam) {
-      const url = `https://www.google.com/maps?q=${event.enlem},${event.boylam}`;
-      Linking.openURL(url);
-    }
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('tr-TR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   };
 
   return (
-    <View style={commonStyles.container}>
-      <ScrollView style={styles.content}>
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Icon name="arrow-back" size={24} color={colors.white} />
+    <ScrollView style={styles.container}>
+      {/* Header Image */}
+      <View style={styles.imageContainer}>
+        {event.fotograf ? (
+          <Image 
+            source={{ uri: event.fotograf }} 
+            style={styles.headerImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.placeholderImage}>
+            <Icon name="event" size={80} color="#ccc" />
+            <Text style={styles.placeholderText}>Fotoğraf Yok</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Content */}
+      <View style={styles.content}>
+        {/* Title and Category */}
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>{event.ad}</Text>
+          <View style={styles.categoryChip}>
+            <Text style={styles.categoryChipText}>Etkinlik</Text>
+          </View>
+        </View>
+
+        {/* Description */}
+        <View style={styles.descriptionSection}>
+          <Text style={styles.description}>{event.aciklama}</Text>
+        </View>
+
+        {/* Info Section */}
+        <View style={styles.infoSection}>
+          {/* Date Info */}
+          <View style={styles.infoRow}>
+            <View style={styles.iconContainer}>
+              <Icon name="calendar-today" size={20} color="#1976D2" />
+            </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>Tarih</Text>
+              <Text style={styles.infoValue}>{formatDate(event.tarih)}</Text>
+            </View>
+            <TouchableOpacity style={styles.reminderButton} activeOpacity={0.7}>
+              <Text style={styles.reminderButtonText}>Bana Hatırlat</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Location Info */}
+          <View style={styles.infoRow}>
+            <View style={styles.iconContainer}>
+              <Icon name="location-on" size={20} color="#1976D2" />
+            </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>Konum</Text>
+              <Text style={styles.infoValue}>{event.adres}</Text>
+            </View>
+            <TouchableOpacity style={styles.directionsButton} onPress={openMaps} activeOpacity={0.7}>
+              <Text style={styles.directionsButtonText}>Yol Tarifi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Action Buttons */}
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8}>
+            <Icon name="favorite" size={22} color="white" />
+            <Text style={styles.primaryButtonText}>Favorilere Ekle</Text>
           </TouchableOpacity>
-          
-          <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>{event.ad}</Text>
-            <Text style={styles.headerSubtitle}>
-              {formatDate(event.tarih)}
-            </Text>
-          </View>
+
+          <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.8}>
+            <Icon name="share" size={22} color="#1976D2" />
+            <Text style={styles.secondaryButtonText}>Paylaş</Text>
+          </TouchableOpacity>
         </View>
-
-        <View style={styles.imageContainer}>
-          {event.fotograf ? (
-            <Image source={{ uri: event.fotograf }} style={styles.eventImage} />
-          ) : (
-            <View style={styles.imagePlaceholder}>
-              <Icon name="event" size={64} color={colors.primary} />
-            </View>
-          )}
-        </View>
-
-        <View style={styles.detailsContainer}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📋 Etkinlik Detayları</Text>
-            <Text style={styles.description}>{event.aciklama}</Text>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📍 Konum</Text>
-            <View style={styles.locationInfo}>
-              <Icon name="location-on" size={20} color={colors.primary} />
-              <Text style={styles.locationText}>{event.adres}</Text>
-            </View>
-            
-            {(event.enlem && event.boylam) && (
-              <TouchableOpacity style={styles.mapButton} onPress={openMaps}>
-                <Icon name="map" size={16} color={colors.white} />
-                <Text style={styles.mapButtonText}>Haritada Göster</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📅 Tarih ve Saat</Text>
-            <View style={styles.dateInfo}>
-              <Icon name="event" size={20} color={colors.primary} />
-              <Text style={styles.dateText}>{formatDate(event.tarih)}</Text>
-            </View>
-          </View>
-
-          {event.telefon_numarasi && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>📞 İletişim</Text>
-              <TouchableOpacity 
-                style={styles.phoneButton}
-                onPress={() => openPhone(event.telefon_numarasi)}
-              >
-                <Icon name="phone" size={16} color={colors.white} />
-                <Text style={styles.phoneButtonText}>{event.telefon_numarasi}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {event.bilet_linki && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🎫 Bilet</Text>
-              <TouchableOpacity 
-                style={styles.ticketButton}
-                onPress={() => openTicketLink(event.bilet_linki)}
-              >
-                <Icon name="confirmation-number" size={16} color={colors.white} />
-                <Text style={styles.ticketButtonText}>Bilet Al</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>💡 Etkinlik İpuçları</Text>
-            <View style={styles.tipsList}>
-              <Text style={styles.tipText}>• Etkinlik saatinden 15 dakika önce gelin</Text>
-              <Text style={styles.tipText}>• Yanınızda kimlik bulundurun</Text>
-              <Text style={styles.tipText}>• Fotoğraf çekmek için izin alın</Text>
-              <Text style={styles.tipText}>• Etkinlik kurallarına uyun</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1,
-  },
-  header: {
-    backgroundColor: colors.primary,
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerContent: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.white,
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: colors.white,
-    opacity: 0.9,
+    backgroundColor: '#f8f9fa',
   },
   imageContainer: {
-    height: 200,
-    backgroundColor: colors.background,
+    width: '100%',
+    height: 280,
   },
-  eventImage: {
+  headerImage: {
     width: '100%',
     height: '100%',
   },
-  imagePlaceholder: {
+  placeholderImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: colors.primaryLight,
+    backgroundColor: '#e8f4f8',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  detailsContainer: {
-    padding: 16,
+  placeholderText: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
   },
-  section: {
-    marginBottom: 24,
+  content: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    marginTop: -24,
+    paddingTop: 24,
+    paddingHorizontal: 20,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
+  titleSection: {
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#2E5266',
     marginBottom: 12,
+    lineHeight: 32,
+  },
+  categoryChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#FF6B35',
+    alignSelf: 'flex-start',
+  },
+  categoryChipText: {
+    fontSize: 12,
+    color: 'white',
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+  },
+  descriptionSection: {
+    marginBottom: 32,
   },
   description: {
     fontSize: 16,
-    color: colors.text.secondary,
-    lineHeight: 24,
+    lineHeight: 26,
+    color: '#555',
+    textAlign: 'left',
   },
-  locationInfo: {
+  infoSection: {
+    marginBottom: 32,
+  },
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  locationText: {
-    fontSize: 16,
-    color: colors.text.primary,
-    marginLeft: 8,
+  iconContainer: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#e3f2fd',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  infoContent: {
     flex: 1,
   },
-  mapButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+  infoLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  infoValue: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  reminderButton: {
+    backgroundColor: '#1976D2',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 8,
+  },
+  reminderButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  directionsButton: {
+    backgroundColor: '#1976D2',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  directionsButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 32,
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: '#1976D2',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    paddingVertical: 16,
+    borderRadius: 12,
+    elevation: 3,
+    shadowColor: '#1976D2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
-  mapButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  dateInfo: {
+  secondaryButton: {
+    flex: 1,
+    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#1976D2',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  dateText: {
+  primaryButtonText: {
+    color: 'white',
     fontSize: 16,
-    color: colors.text.primary,
+    fontWeight: 'bold',
     marginLeft: 8,
   },
-  phoneButton: {
-    backgroundColor: colors.success,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  phoneButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  ticketButton: {
-    backgroundColor: colors.accent,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  ticketButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  tipsList: {
-    gap: 8,
-  },
-  tipText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
+  secondaryButtonText: {
+    color: '#1976D2',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
 
-export default EventDetailScreen; 
+export default EventDetailScreen;

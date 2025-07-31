@@ -1,0 +1,84 @@
+
+
+✅ Yapay Zeka için Final Prompt
+
+(Başkanın Mesajı Ekranı – MayorMessageScreen.js)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda belirtilen .png ekran görüntüsünü ve analiz dokümanını esas alarak, React Native ile geliştirilen mobil uygulamanın Başkanın Mesajı ekranının sadece UI (tasarım) kısmını güncelle.
+
+❗ Supabase üzerinden veri alımı yapılmaktadır. Bu verileri değiştirme.
+❗ Supabase’den veri gelmiyorsa geçici olarak örnek (placeholder) içerik kullanabilirsin.
+
+⸻
+
+📎 REFERANSLAR:
+	•	baskanin_mesaji.png: Ekran görüntüsü – Başkanın mesajı ekranı
+	•	Ekran ismi: MayorMessageScreen.js
+	•	Teknik Döküman:
+📄 “/Users/hasangulec/Desktop/belediye/tire-belediyesi30.07/tire belediyesi analiz dokümanı ve iş planı.pdf”
+(Bölüm: Ana Sayfa → Hızlı Erişim → Başkanın Mesajı)
+
+⸻
+
+🧱 EKRAN BİLEŞENLERİ:
+
+👤 Başkan Bilgileri
+	•	Yuvarlak portre fotoğraf (üstte, dairesel avatar)
+	•	İsim: “Sayın Ahmet YILMAZ”
+	•	Ünvan: “X Belediye Başkanı”
+
+⸻
+
+💬 Mesaj Kartı
+	•	Kart başlığı: “Değerli Hemşehrilerim”
+	•	Açıklama metni:
+Belediye başkanının selamlama mesajı, mobil uygulamanın önemi ve vatandaşlara hizmet vurgusu içeren uzun bir metin
+
+⸻
+
+📞 İletişim Alanı
+	•	Başlık: “İletişim”
+	•	Telefon: (0312) 555 0123
+	•	E-posta: baskan@xbelediyesi.gov.tr
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Veri yapısını ve bağlantısını değiştirme.
+Supabase’den veri çekiliyorsa fetch ya da useEffect fonksiyonları korunmalı.
+	2.	Veri yoksa placeholder kullan:
+
+{
+  name: "Ahmet YILMAZ",
+  title: "X Belediye Başkanı",
+  photo: "https://via.placeholder.com/100",
+  message: "Sevgili X Belediyesi sakinleri, bu modern mobil uygulamamız ile...",
+  phone: "(0312) 555 0123",
+  email: "baskan@xbelediyesi.gov.tr"
+}
+
+
+	3.	UI Tasarımı sadece StyleSheet üzerinden güncelle:
+	•	Avatar yuvarlak ve ortalanmış olmalı
+	•	Metin fontları, spacing, hizalama .png’deki gibi
+	•	Kart köşeleri yuvarlatılmış ve gölgeli olabilir
+	•	İletişim alanı sade ve ikonlu şekilde gösterilmeli
+	•	Renk ve düzen bakımından tüm ekran görselle birebir örtüşmeli
+	4.	Kullanılacak React Native bileşenleri:
+	•	View, Text, Image, ScrollView, TouchableOpacity
+	•	(isteğe bağlı: Linking.openURL() ile e-posta veya telefon tetikleme)
+	5.	Alt menü (Bottom Tab) görünür ve sabit kalmalı
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ MayorMessageScreen.js dosyası React Native formatında hazırlanmış olacak
+	•	✅ UI modernize edilmiş, veri yapısı korunmuş olacak
+	•	✅ Supabase verisi yoksa örnek içerikler gösterilecek
+	•	✅ Görsel olarak baskanin_mesaji.png ekranıyla birebir uyumlu olacak
+
+⸻

@@ -1,376 +1,321 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  RefreshControl,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../styles/colors';
-import { commonStyles } from '../styles/commonStyles';
-import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
+import { supabase } from '../config/supabase';
+
+const { width } = Dimensions.get('window');
 
 const TourismScreen = ({ navigation }) => {
-  const [tourismSpots, setTourismSpots] = useState([]);
+  const [geziNoktalari, setGeziNoktalari] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('tarihi');
+
+  const categories = [
+    { id: 'tarihi', name: 'Tarihi', icon: 'account-balance', color: '#8B4513' },
+    { id: 'kültürel', name: 'Kültürel', icon: 'palette', color: '#FF6B35' },
+    { id: 'yeme-içme', name: 'Yeme-İçme', icon: 'restaurant', color: '#4CAF50' },
+  ];
 
   useEffect(() => {
-    fetchTourismSpots();
+    fetchGeziNoktalari();
   }, []);
 
-  const fetchTourismSpots = async () => {
+  const fetchGeziNoktalari = async () => {
     try {
-      // Yeni gezi_noktalari tablosundan veri çek
+      setLoading(true);
       const { data, error } = await supabase
-        .from(TABLES.GEZI_NOKTALARI)
+        .from('gezi_noktalari')
         .select('*')
-        .order(TABLE_COLUMNS.GEZI_NOKTALARI.AD, { ascending: true });
+        .order('ad', { ascending: true });
 
       if (error) {
-        console.error('Error fetching tourism spots:', error);
-        setTourismSpots(getDemoTourismSpots());
+        console.error('Gezi noktaları yüklenirken hata:', error);
+        setGeziNoktalari(getDemoData());
       } else {
-        setTourismSpots(data || getDemoTourismSpots());
+        setGeziNoktalari(data || getDemoData());
       }
     } catch (error) {
-      console.error('Error:', error);
-      setTourismSpots(getDemoTourismSpots());
+      console.error('Beklenmeyen hata:', error);
+      setGeziNoktalari(getDemoData());
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
 
-  const getDemoTourismSpots = () => [
+  const getDemoData = () => [
     {
       id: 1,
-      ad: 'Tire Eski Belediye Binası',
-      aciklama: 'Osmanlı döneminden kalma tarihi belediye binası',
-      kategori: 'Tarihi Yapı',
+      ad: 'deneme',
+      aciklama: 'den',
+      kategori: 'tarihi',
       enlem: 38.0897,
       boylam: 27.7358,
       fotograf: null,
       acilis_saati: '09:00',
       kapanis_saati: '17:00',
-      telefon_numarasi: '0232 123 45 67',
-      adres: 'Tire Merkez'
+      telefon_numarasi: '20',
+      adres: 'te'
     },
     {
       id: 2,
       ad: 'Tire Müzesi',
-      aciklama: 'Tire\'nin tarihini ve kültürünü yansıtan eserler',
-      kategori: 'Müze',
-      enlem: 38.0893,
-      boylam: 27.7352,
+      aciklama: 'Tire\'nin tarihi ve kültürel mirasını sergileyen müze',
+      kategori: 'kültürel',
+      enlem: 38.0895,
+      boylam: 27.7360,
       fotograf: null,
       acilis_saati: '09:00',
-      kapanis_saati: '18:00',
-      telefon_numarasi: '0232 123 45 68',
-      adres: 'Cumhuriyet Meydanı'
+      kapanis_saati: '17:00',
+      telefon_numarasi: null,
+      adres: 'Tire Merkez'
     },
     {
       id: 3,
-      ad: 'Hacı Ömer Camii',
-      aciklama: '16. yüzyıldan kalma tarihi cami',
-      kategori: 'Dini Yapı',
-      enlem: 38.0891,
-      boylam: 27.7349,
-      fotograf: null,
-      acilis_saati: '05:00',
-      kapanis_saati: '23:00',
-      telefon_numarasi: '0232 123 45 69',
-      adres: 'Eski Mahalle'
-    },
-    {
-      id: 4,
-      ad: 'Tire Pazarı',
-      aciklama: 'Geleneksel Tire pazarı ve el sanatları',
-      kategori: 'Kültürel',
-      enlem: 38.0890,
-      boylam: 27.7350,
+      ad: 'Tire Lokum Evi',
+      aciklama: 'Geleneksel Tire lokumu üretim ve satış yeri',
+      kategori: 'yeme-içme',
+      enlem: 38.0892,
+      boylam: 27.7355,
       fotograf: null,
       acilis_saati: '08:00',
-      kapanis_saati: '18:00',
-      telefon_numarasi: '0232 123 45 70',
-      adres: 'Pazar Yeri'
-    },
-    {
-      id: 5,
-      ad: 'Tire Millet Bahçesi',
-      aciklama: 'Doğa yürüyüşü ve rekreasyon alanı',
-      kategori: 'Doğa',
-      enlem: 38.0900,
-      boylam: 27.7360,
-      fotograf: null,
-      acilis_saati: '06:00',
-      kapanis_saati: '22:00',
-      telefon_numarasi: '0232 123 45 71',
-      adres: 'Yeni Mahalle'
-    },
+      kapanis_saati: '20:00',
+      telefon_numarasi: null,
+      adres: 'Tire Merkez'
+    }
   ];
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchTourismSpots();
+    fetchGeziNoktalari();
   };
 
-  const getCategoryIcon = (kategori) => {
-    switch (kategori?.toLowerCase()) {
-      case 'tarihi yapı':
-        return 'account-balance';
-      case 'müze':
-        return 'museum';
-      case 'dini yapı':
-        return 'mosque';
-      case 'kültürel':
-        return 'culture';
-      case 'doğa':
-        return 'park';
-      default:
-        return 'place';
-    }
+  const filteredGeziNoktalari = geziNoktalari.filter(
+    nokta => nokta.kategori === selectedCategory
+  );
+
+  const onSpotPress = (spot) => {
+    navigation.navigate('TourismSpotDetail', { spot });
   };
 
   const getCategoryColor = (kategori) => {
-    switch (kategori?.toLowerCase()) {
-      case 'tarihi yapı':
-        return '#8B4513';
-      case 'müze':
-        return '#4A90E2';
-      case 'dini yapı':
-        return '#7B68EE';
-      case 'kültürel':
-        return '#FF6B35';
-      case 'doğa':
-        return '#4CAF50';
-      default:
-        return colors.primary;
-    }
+    const category = categories.find(cat => cat.id === kategori);
+    return category ? category.color : '#2E5266';
   };
 
-  const TourismSpotCard = ({ spot }) => (
-    <TouchableOpacity 
+  const renderSpotCard = ({ item }) => (
+    <TouchableOpacity
       style={styles.spotCard}
-      onPress={() => navigation.navigate('TourismSpotDetail', { spot })}
+      onPress={() => onSpotPress(item)}
+      activeOpacity={0.7}
     >
-      <View style={styles.spotImageContainer}>
-        {spot.fotograf ? (
-          <Image source={{ uri: spot.fotograf }} style={styles.spotImage} />
-        ) : (
-          <View style={styles.spotImagePlaceholder}>
-            <Icon name={getCategoryIcon(spot.kategori)} size={40} color={colors.primary} />
+      <View style={styles.cardContent}>
+        <View style={styles.spotHeader}>
+          <Text style={styles.spotTitle}>{item.ad}</Text>
+          <View style={[styles.categoryChip, { backgroundColor: getCategoryColor(item.kategori) }]}>
+            <Text style={styles.categoryChipText}>{item.kategori}</Text>
           </View>
-        )}
-        
-        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(spot.kategori) }]}>
-          <Text style={styles.categoryText}>{spot.kategori}</Text>
         </View>
-      </View>
-      
-      <View style={styles.spotContent}>
-        <Text style={styles.spotTitle}>{spot.ad}</Text>
+        
         <Text style={styles.spotDescription} numberOfLines={2}>
-          {spot.aciklama}
+          {item.aciklama}
         </Text>
         
-        <View style={styles.spotDetails}>
-          <View style={styles.detailRow}>
-            <Icon name="access-time" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>
-              {spot.acilis_saati} - {spot.kapanis_saati}
-            </Text>
+        {item.adres && (
+          <View style={styles.locationContainer}>
+            <Icon name="location-on" size={16} color="#666" />
+            <Text style={styles.locationText}>{item.adres}</Text>
           </View>
-          
-          <View style={styles.detailRow}>
-            <Icon name="location-on" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{spot.adres}</Text>
-          </View>
-          
-          {spot.telefon_numarasi && (
-            <View style={styles.detailRow}>
-              <Icon name="phone" size={16} color={colors.primary} />
-              <Text style={styles.detailText}>{spot.telefon_numarasi}</Text>
-            </View>
-          )}
-        </View>
+        )}
+      </View>
+      
+      <View style={styles.arrowContainer}>
+        <Icon name="chevron-right" size={24} color="#2E5266" />
       </View>
     </TouchableOpacity>
   );
 
-  if (loading) {
-    return (
-      <View style={[commonStyles.container, commonStyles.centerContent]}>
-        <Text style={styles.loadingText}>Turizm noktaları yükleniyor...</Text>
-      </View>
-    );
-  }
-
   return (
-    <View style={commonStyles.container}>
-      <ScrollView
-        style={styles.content}
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Gezi Noktaları</Text>
+      </View>
+
+      {/* Category Tabs */}
+      <View style={styles.categoryTabsContainer}>
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category.id}
+            style={[
+              styles.categoryTab,
+              selectedCategory === category.id && styles.activeTab
+            ]}
+            onPress={() => setSelectedCategory(category.id)}
+          >
+            <Icon 
+              name={category.icon} 
+              size={18} 
+              color={selectedCategory === category.id ? '#1976D2' : '#666'} 
+            />
+            <Text 
+              style={[
+                styles.categoryTabText,
+                selectedCategory === category.id && styles.activeTabText
+              ]}
+            >
+              {category.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Spots List */}
+      <FlatList
+        data={filteredGeziNoktalari}
+        renderItem={renderSpotCard}
+        keyExtractor={(item) => item.id.toString()}
+        style={styles.spotsList}
+        contentContainerStyle={styles.spotsListContent}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      >
-        <View style={styles.header}>
-          <Icon name="place" size={32} color={colors.white} />
-          <Text style={styles.headerTitle}>Turizm Noktaları</Text>
-          <Text style={styles.headerSubtitle}>
-            Tire'nin tarihi ve kültürel mekanları
-          </Text>
-        </View>
-
-        <View style={styles.spotsSection}>
-          {tourismSpots.length > 0 ? (
-            tourismSpots.map((spot) => (
-              <TourismSpotCard key={spot.id} spot={spot} />
-            ))
-          ) : (
-            <View style={styles.emptyState}>
-              <Icon name="place" size={64} color={colors.gray} />
-              <Text style={styles.emptyStateText}>
-                Turizm noktası bilgisi bulunamadı.
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1,
+    backgroundColor: '#f8f9fa',
   },
   header: {
-    padding: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: colors.white,
-    marginBottom: 4,
+    color: '#2E5266',
   },
-  headerSubtitle: {
-    fontSize: 16,
-    color: colors.white,
-    opacity: 0.9,
-  },
-  quickActions: {
+  categoryTabsContainer: {
     flexDirection: 'row',
-    padding: 16,
-    gap: 8,
+    backgroundColor: 'white',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
-  actionButton: {
+  categoryTab: {
     flex: 1,
-    backgroundColor: colors.white,
-    padding: 12,
-    borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    ...commonStyles.shadow,
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
   },
-  actionButtonText: {
-    fontSize: 12,
-    color: colors.primary,
+  activeTab: {
+    borderBottomColor: '#1976D2',
+  },
+  categoryTabText: {
+    marginLeft: 6,
+    fontSize: 14,
     fontWeight: '500',
-    textAlign: 'center',
+    color: '#666',
   },
-  spotsSection: {
-    paddingHorizontal: 16,
+  activeTabText: {
+    color: '#1976D2',
+    fontWeight: 'bold',
+  },
+  spotsList: {
+    flex: 1,
+  },
+  spotsListContent: {
+    padding: 16,
   },
   spotCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    marginVertical: 8,
-    overflow: 'hidden',
-    ...commonStyles.shadow,
-  },
-  spotImageContainer: {
-    position: 'relative',
-    height: 150,
-  },
-  spotImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  spotImagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
   },
-  categoryBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
+  cardContent: {
+    flex: 1,
+  },
+  spotHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  spotTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2E5266',
+    flex: 1,
+  },
+  categoryChip: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    marginLeft: 8,
   },
-  categoryText: {
-    fontSize: 12,
-    color: colors.white,
-    fontWeight: '600',
-  },
-  spotContent: {
-    padding: 16,
-  },
-  spotTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 4,
+  categoryChipText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: 'white',
+    textTransform: 'capitalize',
   },
   spotDescription: {
     fontSize: 14,
-    color: colors.text.secondary,
-    marginBottom: 12,
+    color: '#666',
     lineHeight: 20,
+    marginBottom: 8,
   },
-  spotDetails: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 12,
-  },
-  detailRow: {
+  locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-  },
-  detailText: {
-    fontSize: 12,
-    color: colors.text.secondary,
-  },
-  spotFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
   },
   locationText: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: '500',
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
   },
-  loadingText: {
-    fontSize: 16,
-    color: colors.text.secondary,
+  arrowContainer: {
+    marginLeft: 12,
+    padding: 4,
   },
-  emptyState: {
-    alignItems: 'center',
-    padding: 40,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginTop: 16,
+  separator: {
+    height: 12,
   },
 });
 
-export default TourismScreen; 
+export default TourismScreen;

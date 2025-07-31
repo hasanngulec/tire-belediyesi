@@ -1,315 +1,215 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, RefreshControl } from 'react-native';
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../styles/colors';
-import { commonStyles } from '../styles/commonStyles';
-import { supabase, TABLES, TABLE_COLUMNS } from '../config/supabase';
 
-const TravelRoutesScreen = ({ navigation }) => {
-  const [routes, setRoutes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    fetchRoutes();
-  }, []);
-
-  const fetchRoutes = async () => {
-    try {
-      // Yeni rotalar tablosundan veri çek
-      const { data, error } = await supabase
-        .from(TABLES.ROTALAR)
-        .select('*')
-        .order(TABLE_COLUMNS.ROTALAR.ID, { ascending: true });
-
-      if (error) {
-        console.error('Error fetching routes:', error);
-        setRoutes(getDemoRoutes());
-      } else {
-        setRoutes(data || getDemoRoutes());
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setRoutes(getDemoRoutes());
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+const TravelRoutesScreen = () => {
+  const routes = [
+    {
+      name: "Tarihi Tur Rotası",
+      description: "Şehrimizin tarihi yerlerini keşfedin",
+      duration: "3-4 saat",
+      distance: "2.5 km",
+      difficulty: "Kolay",
+      stops: ["Tarihi Ulu Cami", "Antik Kale", "Tarihi Hamam"],
+      color: "#f44336"
+    },
+    {
+      name: "Kültür ve Sanat Rotası",
+      description: "Kültürel mekanları ziyaret edin",
+      duration: "2-3 saat",
+      distance: "1.8 km",
+      difficulty: "Kolay",
+      stops: ["Kültür Merkezi", "Sanat Galerisi", "Amfi Tiyatro"],
+      color: "#3f51b5"
+    },
+    {
+      name: "Lezzet Rotası",
+      description: "Yerel lezzetleri tadın",
+      duration: "4-5 saat",
+      distance: "3.2 km",
+      difficulty: "Orta",
+      stops: ["Yerel Lezzet Evi", "Tatlı Dükkanı", "Pazar Yeri"],
+      color: "#4caf50"
     }
-  };
-
-  // Yeni rotalar tablosu yapısına göre demo veriler
-  const getDemoRoutes = () => [
-    {
-      id: 1,
-      aciklama: 'Tire\'nin tarihi yerlerini keşfetmek için ideal rota',
-      gezi_nok_id: 1,
-      kategori: 'Tarihi Tur'
-    },
-    {
-      id: 2,
-      aciklama: 'El sanatları ve kültürel mekanları ziyaret etmek için özel rota',
-      gezi_nok_id: 4,
-      kategori: 'Kültür Turu'
-    },
-    {
-      id: 3,
-      aciklama: 'Tire\'nin doğal güzelliklerini keşfetmek için mükemmel rota',
-      gezi_nok_id: 5,
-      kategori: 'Doğa Turu'
-    },
   ];
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchRoutes();
-  };
-
-  const getCategoryInfo = (kategori) => {
-    switch (kategori?.toLowerCase()) {
-      case 'tarihi tur':
-        return { text: 'Tarihi Tur', color: '#8B4513', icon: 'account-balance' };
-      case 'kültür turu':
-        return { text: 'Kültür Turu', color: '#FF6B35', icon: 'culture' };
-      case 'doğa turu':
-        return { text: 'Doğa Turu', color: '#4CAF50', icon: 'park' };
-      default:
-        return { text: 'Genel Tur', color: colors.primary, icon: 'directions' };
-    }
-  };
-
-  const RouteCard = ({ route }) => {
-    const category = getCategoryInfo(route.kategori);
-    
-    return (
-      <TouchableOpacity style={styles.routeCard}>
-        <View style={styles.routeHeader}>
-          <Text style={styles.routeName}>{route.kategori}</Text>
-          <View style={[styles.categoryBadge, { backgroundColor: category.color }]}>
-            <Icon name={category.icon} size={16} color={colors.white} />
-            <Text style={styles.categoryText}>{category.text}</Text>
-          </View>
-        </View>
-
-        <Text style={styles.routeDescription}>{route.aciklama}</Text>
-
-        <View style={styles.routeDetails}>
-          <View style={styles.detailRow}>
-            <Icon name="directions" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>Rota #{route.id}</Text>
-          </View>
-
-          <View style={styles.detailRow}>
-            <Icon name="place" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>Gezi Noktası #{route.gezi_nok_id}</Text>
-          </View>
-
-          <View style={styles.detailRow}>
-            <Icon name="category" size={16} color={colors.primary} />
-            <Text style={styles.detailText}>{route.kategori}</Text>
-          </View>
-        </View>
-
-        <View style={styles.routeActions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="directions" size={20} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Rotayı Başlat</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="bookmark-border" size={20} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Kaydet</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  if (loading) {
-    return (
-      <View style={[commonStyles.container, commonStyles.centerContent]}>
-        <Text style={styles.loadingText}>Gezi rotaları yükleniyor...</Text>
+  const renderRouteCard = ({ item }) => (
+    <View style={styles.routeCard}>
+      <Text style={styles.routeName}>{item.name}</Text>
+      <Text style={styles.routeDescription}>{item.description}</Text>
+      <View style={styles.routeDetails}>
+        <Text style={[styles.difficultyChip, { backgroundColor: item.color }]}>{item.difficulty}</Text>
+        <Text style={styles.routeInfo}>{item.duration} • {item.distance}</Text>
       </View>
-    );
-  }
+      <View style={styles.stopsContainer}>
+        {item.stops.map((stop, index) => (
+          <Text key={index} style={styles.stopChip}>{stop}</Text>
+        ))}
+      </View>
+      <View style={styles.actionButtons}>
+        <TouchableOpacity style={styles.mapButton}>
+          <Text style={styles.mapButtonText}>Harita İndir</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.guideButton}>
+          <Text style={styles.guideButtonText}>Rehber Talep Et</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const renderHeader = () => (
+    <>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Gezi Rotaları</Text>
+        <Text style={styles.headerSubtitle}>Şehrimizi keşfetmek için önerilen rotalar</Text>
+      </View>
+
+      {/* Tips Box */}
+      <View style={styles.tipsBox}>
+        <Icon name="lightbulb" size={24} color="#1976D2" />
+        <Text style={styles.tipsText}>Rotaları takip ederken rahat ayakkabı giyin ve su şişenizi yanınıza alın.</Text>
+      </View>
+    </>
+  );
 
   return (
-    <View style={commonStyles.container}>
-      <ScrollView
-        style={styles.content}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={styles.header}>
-          <Icon name="directions" size={32} color={colors.white} />
-          <Text style={styles.headerTitle}>Gezi Rotaları</Text>
-          <Text style={styles.headerSubtitle}>
-            Tire'yi keşfetmek için önerilen rotalar
-          </Text>
-        </View>
-
-        <View style={styles.tipsSection}>
-          <Text style={styles.tipTitle}>💡 Gezi İpuçları</Text>
-          <View style={styles.tipsList}>
-            <Text style={styles.tipText}>• Rahat ayakkabı giyin</Text>
-            <Text style={styles.tipText}>• Yanınızda su bulundurun</Text>
-            <Text style={styles.tipText}>• Fotoğraf makinenizi unutmayın</Text>
-            <Text style={styles.tipText}>• Yerel rehberlerden yardım alın</Text>
-          </View>
-        </View>
-
-        <View style={styles.routesSection}>
-          {routes.length > 0 ? (
-            routes.map((route) => (
-              <RouteCard key={route.id} route={route} />
-            ))
-          ) : (
-            <View style={styles.emptyState}>
-              <Icon name="directions" size={64} color={colors.gray} />
-              <Text style={styles.emptyStateText}>
-                Gezi rotası bilgisi bulunamadı.
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
+    <View style={styles.container}>
+      <FlatList
+        data={routes}
+        renderItem={renderRouteCard}
+        keyExtractor={(item) => item.name}
+        ListHeaderComponent={renderHeader}
+        contentContainerStyle={styles.routesList}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1,
+    backgroundColor: '#f8f9fa',
   },
   header: {
-    backgroundColor: colors.primary,
     padding: 20,
-    alignItems: 'center',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.white,
-    marginTop: 8,
+    color: '#2E5266',
     marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: colors.white,
-    textAlign: 'center',
-    opacity: 0.9,
-  },
-  tipsSection: {
-    backgroundColor: '#E8F5E8',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.success,
-  },
-  tipTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  tipsList: {
-    gap: 4,
-  },
-  tipText: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: '#666',
   },
-  routesSection: {
-    paddingHorizontal: 16,
-  },
-  routeCard: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    ...commonStyles.shadow,
-  },
-  routeHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  routeName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.text.primary,
-    flex: 1,
-    marginRight: 12,
-  },
-  categoryBadge: {
+  tipsBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    padding: 16,
+    margin: 20,
+    backgroundColor: '#e3f2fd',
     borderRadius: 12,
-    gap: 4,
   },
-  categoryText: {
-    fontSize: 12,
-    color: colors.white,
-    fontWeight: '600',
+  tipsText: {
+    fontSize: 14,
+    color: '#1976D2',
+    marginLeft: 8,
+  },
+  routesList: {
+    padding: 20,
+  },
+  routeCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  routeName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2E5266',
+    marginBottom: 8,
   },
   routeDescription: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    marginBottom: 16,
-    lineHeight: 22,
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
   },
   routeDetails: {
     flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  difficultyChip: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+  routeInfo: {
+    fontSize: 12,
+    color: '#999',
+  },
+  stopsContainer: {
+    flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  detailRow: {
+  stopChip: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    fontSize: 12,
+    color: '#666',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  actionButtons: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    justifyContent: 'space-between',
   },
-  detailText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-  },
-  routeActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  actionButton: {
-    flex: 1,
-    backgroundColor: colors.background,
+  mapButton: {
+    backgroundColor: '#1976D2',
     paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
   },
-  actionButtonText: {
+  mapButtonText: {
+    color: 'white',
     fontSize: 14,
-    color: colors.primary,
-    fontWeight: '500',
+    fontWeight: 'bold',
   },
-  loadingText: {
-    fontSize: 16,
-    color: colors.text.secondary,
+  guideButton: {
+    borderColor: '#1976D2',
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
-  emptyState: {
-    alignItems: 'center',
-    padding: 40,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginTop: 16,
+  guideButtonText: {
+    color: '#1976D2',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 

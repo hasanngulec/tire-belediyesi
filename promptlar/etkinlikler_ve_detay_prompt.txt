@@ -1,0 +1,109 @@
+
+
+⸻
+
+✅ Yapay Zeka için Final Prompt
+
+(Etkinlikler Liste + Detay Ekranları için, sadece UI değişikliği)
+
+⸻
+
+🎯 GÖREV:
+
+Aşağıda referans olarak verilen .png görsellerini ve iş planı dokümanını temel alarak, React Native ile geliştirilmiş mobil uygulamanın Etkinlikler ekranı ve Etkinlik Detay ekranının sadece UI (görsel arayüz) tasarımını güncelle.
+
+ÖNEMLİ:
+Supabase’den gelen veriler zaten uygulamaya entegre edilmiş durumda.
+❌ Bu verileri değiştirme, silme ya da sabit yazıyla override etme.
+✅ Sadece StyleSheet üzerinden tasarımı modernize et.
+
+🧩 Eğer Supabase’den veri gelmiyorsa, aşağıdaki örnek içerikleri geçici olarak placeholder olarak kullanabilirsin.
+
+⸻
+
+📎 REFERANSLAR:
+	•	etkinlik.png: Etkinlik listeleme ekranı (ana sekme)
+	•	etkinlik_detay.png: Etkinlik detay ekranı (kartın içine girince)
+	•	Analiz Dokümanı: “Tire Belediyesi Mobil Uygulama Sistem Bileşenleri”
+(özellikle Bölüm 5: Etkinlikler Sekme Bileşenleri)
+
+⸻
+
+🧱 1. Etkinlik Listeleme Ekranı – etkinlik.png
+
+Bu ekran, “Etkinlikler” sekmesine aittir. Tasarımda aşağıdakilere dikkat et:
+	•	Sayfa Başlığı: Etkinlikler
+	•	Alt alta sıralı kartlar (FlatList veya ScrollView)
+	•	Her kartta:
+	•	Görsel (üstte, köşeleri yuvarlatılmış)
+	•	Kategori etiketi (chip):
+	•	“Kültür” → kırmızı
+	•	“Gastronomi” → yeşil
+	•	Tarih (örnek: 15 Mayıs 2024)
+	•	Başlık (kalın font)
+	•	Açıklama (2 satırla sınırlı, ... ile kısaltılmış)
+	•	Kart tıklanınca detay sayfasına geçiş yapılmalı
+	•	Alt menü (BottomTab) sabit ve Etkinlikler sekmesi aktif
+
+⸻
+
+🧾 2. Etkinlik Detay Ekranı – etkinlik_detay.png
+
+Bu ekran, yukarıdaki listeden bir etkinliğe tıklandığında açılır. Şu yapıda olmalı:
+	•	Üst görsel (köşeleri yuvarlatılmış)
+	•	Başlık (kalın font)
+	•	Kategori etiketi (chip)
+	•	Açıklama metni (paragraf)
+	•	Bilgi kutuları:
+	•	Tarih: Tarih bilgisi + “Bana Hatırlat” butonu
+	•	Konum: Mekan bilgisi + “Yol Tarifi” butonu
+	•	Aksiyon butonları:
+	•	Favorilere Ekle (mavi dolu buton)
+	•	Paylaş (gri çerçeve buton)
+	•	Alt menü yine sabit kalmalı
+
+⸻
+
+⚠️ KURALLAR:
+	1.	Supabase’den gelen içerikleri koru.
+Örnek:
+
+title: "Geleneksel Halk Oyunları Gösterisi",
+description: "Yerel halk oyunları ekiplerinin sunduğu kültürel gösteri",
+category: "Kültür",
+date: "2024-05-15",
+location: "Kültür Merkezi Ana Salon"
+
+
+	2.	Veri yoksa geçici örnek veriler (placeholder) kullan:
+
+{
+  title: "Yerel Lezzet Festivali",
+  category: "Gastronomi",
+  date: "22 Mayıs 2024",
+  location: "Kent Meydanı",
+  description: "Geleneksel lezzetlerin sunulduğu büyük gastronomi etkinliği"
+}
+
+
+	3.	Yalnızca UI güncellemesi yap:
+	•	Font boyutları ve kalınlıkları
+	•	Kart kenarlıkları, gölgeler, boşluklar
+	•	Renkli chip tasarımları
+	•	Buton tarzları (primary/outline)
+	4.	React Native bileşenlerini kullan:
+	•	View, Text, Image, TouchableOpacity, FlatList, ScrollView
+	•	Navigasyon için navigation.navigate(...) mantığı korunmalı
+	5.	Kodun sadece StyleSheet kısmı UI’ı etkileyebilir.
+API logic, veri fetch veya navigation yapıları değiştirilmeyecek.
+
+⸻
+
+🔚 ÇIKTI BEKLENTİSİ:
+	•	✅ EtkinliklerScreen → liste ekranı için component
+	•	✅ EtkinlikDetayScreen → detay ekranı için component
+	•	✅ UI modernize edilmiş olacak ama veri kaynakları ve yapısı değişmeyecek
+	•	✅ Supabase verisi gelmezse örnek placeholder içerik gösterilecek
+
+⸻
+
