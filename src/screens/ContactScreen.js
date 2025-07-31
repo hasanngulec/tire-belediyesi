@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const ContactScreen = () => {
+const ContactScreen = ({ navigation }) => {
   const contactInfo = {
     phone: "(0312) 555 0123",
     email: "iletisim@xbelediyesi.gov.tr",
@@ -91,7 +91,15 @@ const ContactScreen = () => {
         {/* Address Card */}
         <TouchableOpacity 
           style={styles.contactCard}
-          onPress={openMaps}
+          onPress={() => navigation.navigate('Map', {
+            spot: {
+              ad: 'Tire Belediyesi',
+              aciklama: 'Tire Belediyesi merkez binası',
+              enlem: 38.0931,
+              boylam: 27.7519,
+              kategori: 'belediye'
+            }
+          })}
           activeOpacity={0.7}
         >
           <View style={styles.cardIconContainer}>

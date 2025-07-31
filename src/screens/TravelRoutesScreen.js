@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const TravelRoutesScreen = () => {
+const TravelRoutesScreen = ({ navigation }) => {
   const routes = [
     {
       name: "Tarihi Tur Rotası",
@@ -53,7 +53,18 @@ const TravelRoutesScreen = () => {
         ))}
       </View>
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.mapButton}>
+        <TouchableOpacity 
+          style={styles.mapButton}
+          onPress={() => navigation.navigate('Map', {
+            spot: {
+              ad: item.name,
+              aciklama: item.description,
+              enlem: 38.0931, // İlk durağın koordinatları
+              boylam: 27.7519,
+              kategori: 'rota'
+            }
+          })}
+        >
           <Text style={styles.mapButtonText}>Rotaya Git</Text>
         </TouchableOpacity>
       </View>

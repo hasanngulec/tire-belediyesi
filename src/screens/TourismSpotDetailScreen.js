@@ -129,7 +129,15 @@ const TourismSpotDetailScreen = ({ route, navigation }) => {
         <View style={styles.actionButtonsContainer}>
           <TouchableOpacity 
             style={styles.primaryButton}
-            onPress={openMaps}
+            onPress={() => navigation.navigate('Map', {
+              spot: {
+                ad: spot.ad,
+                aciklama: spot.aciklama,
+                enlem: parseFloat(spot.enlem),
+                boylam: parseFloat(spot.boylam),
+                kategori: spot.kategori
+              }
+            })}
             activeOpacity={0.8}
           >
             <Icon name="directions" size={22} color="white" />

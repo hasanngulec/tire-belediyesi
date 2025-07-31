@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const DutyPharmaciesScreen = () => {
+const DutyPharmaciesScreen = ({ navigation }) => {
   const data = {
     dutyPharmacy: {
       name: "Şifa Eczanesi",
@@ -58,7 +58,18 @@ const DutyPharmaciesScreen = () => {
         <TouchableOpacity style={styles.callButton}>
           <Text style={styles.callButtonText}>Ara</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.directionsButton}>
+        <TouchableOpacity 
+          style={styles.directionsButton}
+          onPress={() => navigation.navigate('Map', {
+            spot: {
+              ad: 'Nöbetçi Eczane',
+              aciklama: 'Acil durumlar için nöbetçi eczane',
+              enlem: 38.0931,
+              boylam: 27.7519,
+              kategori: 'eczane'
+            }
+          })}
+        >
           <Text style={styles.directionsButtonText}>Yol Tarifi</Text>
         </TouchableOpacity>
       </View>
@@ -87,7 +98,18 @@ const DutyPharmaciesScreen = () => {
         <TouchableOpacity style={styles.callButton}>
           <Text style={styles.callButtonText}>Ara</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.directionsButton}>
+        <TouchableOpacity 
+          style={styles.directionsButton}
+          onPress={() => navigation.navigate('Map', {
+            spot: {
+              ad: item.name,
+              aciklama: item.address,
+              enlem: 38.0931,
+              boylam: 27.7519,
+              kategori: 'eczane'
+            }
+          })}
+        >
           <Text style={styles.directionsButtonText}>Yol Tarifi</Text>
         </TouchableOpacity>
       </View>

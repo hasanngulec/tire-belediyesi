@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,14 +7,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { supabase } from '../config/supabase';
 
-export default function MapScreen({ navigation }) {
+export default function MapScreen({ navigation, route }) {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const mapRef = useRef(null);
+  const markerRefs = useRef({});
 
   // Tire merkez koordinatları
   const initialRegion = {
@@ -23,6 +25,9 @@ export default function MapScreen({ navigation }) {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   };
+
+  // route.params.spot varsa onu kullan, yoksa initial region
+  const [region, setRegion] = useState(initialRegion);
 
   const categories = [
     { id: 'all', name: 'Tümü', color: '#2E5266', icon: 'place' },
@@ -34,6 +39,25 @@ export default function MapScreen({ navigation }) {
   useEffect(() => {
     fetchPlaces();
   }, []);
+
+  useEffect(() => {
+    // route.params.spot varsa haritayı o konuma odakla
+    if (route.params?.spot) {
+      const spot = route.params.spot;
+      const newRegion = {
+        latitude: parseFloat(spot.enlem),
+        longitude: parseFloat(spot.boylam),
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+      setRegion(newRegion);
+      
+      // Haritayı yeni konuma odakla
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(newRegion, 1000);
+      }
+    }
+  }, [route.params?.spot]);
 
   const fetchPlaces = async () => {
     try {
@@ -141,14 +165,40 @@ export default function MapScreen({ navigation }) {
 
       {/* Harita */}
       <MapView
-        provider={PROVIDER_GOOGLE}
+        ref={mapRef}
+        provider={PROVIDER_DEFAULT}
         style={styles.map}
-        initialRegion={initialRegion}
+        initialRegion={region}
+        region={region}
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
         showsScale={true}
+        customMapStyle={[]}
       >
+        {/* route.params.spot varsa onu göster */}
+        {route.params?.spot && (
+          <Marker
+            coordinate={{
+              latitude: parseFloat(route.params.spot.enlem),
+              longitude: parseFloat(route.params.spot.boylam),
+            }}
+            title={route.params.spot.ad}
+            description={route.params.spot.aciklama}
+            pinColor="#FF5722"
+            ref={(ref) => {
+              if (ref) {
+                markerRefs.current[route.params.spot.id || 'spot'] = ref;
+                // Marker'ı otomatik aç
+                setTimeout(() => {
+                  ref.showCallout();
+                }, 1000);
+              }
+            }}
+          />
+        )}
+
+        {/* Tüm gezi noktaları */}
         {getFilteredPlaces().map((place) => (
           <Marker
             key={place.id}
@@ -160,16 +210,30 @@ export default function MapScreen({ navigation }) {
             description={place.aciklama}
             onPress={() => handleMarkerPress(place)}
             pinColor={getMarkerColor(place.kategori)}
+            ref={(ref) => {
+              if (ref) {
+                markerRefs.current[place.id] = ref;
+              }
+            }}
           />
         ))}
       </MapView>
+
+      {/* Veri yoksa uyarı mesajı */}
+      {places.length === 0 && !loading && (
+        <View style={styles.noDataContainer}>
+          <Icon name="warning" size={48} color="#FF9800" />
+          <Text style={styles.noDataText}>Veri bulunamadı</Text>
+          <Text style={styles.noDataSubtext}>Gezi noktaları yüklenemedi</Text>
+        </View>
+      )}
 
       {/* Alt Bilgi Paneli */}
       <View style={styles.infoPanel}>
         <View style={styles.infoPanelContent}>
           <Icon name="info" size={20} color="#2E5266" />
           <Text style={styles.infoPanelText}>
-            {getFilteredPlaces().length} konum gösteriliyor
+            {route.params?.spot ? '1' : getFilteredPlaces().length} konum gösteriliyor
           </Text>
         </View>
         
@@ -217,6 +281,32 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     color: '#666',
+  },
+  noDataContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 15,
+    padding: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  noDataText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF9800',
+    marginTop: 12,
+  },
+  noDataSubtext: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
   },
   categoryContainer: {
     backgroundColor: 'white',

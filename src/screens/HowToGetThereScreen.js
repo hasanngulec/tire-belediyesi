@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { width } = Dimensions.get('window');
 
-const HowToGetThereScreen = () => {
+const HowToGetThereScreen = ({ navigation }) => {
   const address = "Cumhuriyet Mahallesi, Belediye Caddesi No:1, 06000 Merkez";
   const transportation = [
     {
@@ -46,7 +46,19 @@ const HowToGetThereScreen = () => {
       <View style={styles.addressBox}>
         <Text style={styles.addressTitle}>Adres</Text>
         <Text style={styles.addressText}>{address}</Text>
-        <TouchableOpacity style={styles.mapButton} activeOpacity={0.7}>
+        <TouchableOpacity 
+          style={styles.mapButton} 
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Map', {
+            spot: {
+              ad: 'Tire Belediyesi',
+              aciklama: 'Tire Belediyesi merkez binası',
+              enlem: 38.0931,
+              boylam: 27.7519,
+              kategori: 'belediye'
+            }
+          })}
+        >
           <Text style={styles.mapButtonText}>Haritada Göster</Text>
         </TouchableOpacity>
       </View>
