@@ -39,7 +39,7 @@ const HowToGetThereScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Nasıl Gelinir</Text>
-        <Text style={styles.headerSubtitle}>X Belediyesi merkez binasına ulaşım seçenekleri</Text>
+                            <Text style={styles.headerSubtitle}>Tire Belediyesi merkez binasına ulaşım seçenekleri</Text>
       </View>
 
       {/* Address Box */}

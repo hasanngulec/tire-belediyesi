@@ -54,10 +54,7 @@ const TravelRoutesScreen = () => {
       </View>
       <View style={styles.actionButtons}>
         <TouchableOpacity style={styles.mapButton}>
-          <Text style={styles.mapButtonText}>Harita İndir</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.guideButton}>
-          <Text style={styles.guideButtonText}>Rehber Talep Et</Text>
+          <Text style={styles.mapButtonText}>Rotaya Git</Text>
         </TouchableOpacity>
       </View>
     </View>

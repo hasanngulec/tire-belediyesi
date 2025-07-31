@@ -12,9 +12,9 @@ import {
 const MayorMessageScreen = () => {
   const data = {
     name: "Ahmet YILMAZ",
-    title: "X Belediye Başkanı",
+    title: "Tire Belediye Başkanı",
     photo: "https://via.placeholder.com/100",
-    message: "Sevgili X Belediyesi sakinleri, bu modern mobil uygulamamız ile...",
+                    message: "Sevgili Tire Belediyesi sakinleri, bu modern mobil uygulamamız ile...",
     phone: "(0312) 555 0123",
     email: "baskan@xbelediyesi.gov.tr"
   };
