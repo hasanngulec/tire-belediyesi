@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Linking, Alert, Clipboard } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ContactScreen = ({ navigation }) => {
   const contactInfo = {
-    phone: "(0312) 555 0123",
-    email: "iletisim@xbelediyesi.gov.tr",
-    address: "Cumhuriyet Mah. Belediye Cad. No:1",
-    whatsapp: "(0312) 555 0124"
+    phone: "4443503",
+    email: "tirebel@tire.bel.tr",
+    address: "29 EKİM CAD. CUMHURİYET MAH. NO:19 35900 İZMİR/TİRE",
+    whatsapp: "+90 444 35 03"
   };
 
   const departments = [
@@ -28,16 +28,70 @@ const ContactScreen = ({ navigation }) => {
     }
   ];
 
-  const makePhoneCall = (phoneNumber) => {
-    Linking.openURL(`tel:${phoneNumber}`);
+  const makePhoneCall = async (phoneNumber) => {
+    try {
+      // Telefon numarasını temizle ve formatla
+      const cleanNumber = phoneNumber.replace(/\s/g, '');
+      const url = `tel:${cleanNumber}`;
+      console.log('Aranacak numara:', url);
+      
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        console.log('Telefon uygulaması açılamadı');
+        // Numarayı panoya kopyala
+        Clipboard.setString(cleanNumber);
+        Alert.alert(
+          'Telefon Uygulaması Bulunamadı', 
+          `Telefon numarası panoya kopyalandı: ${cleanNumber}\n\nNumarayı manuel olarak arayabilirsiniz.`,
+          [{ text: 'Tamam', style: 'default' }]
+        );
+      }
+    } catch (error) {
+      console.error('Telefon arama hatası:', error);
+      Clipboard.setString(phoneNumber);
+      Alert.alert(
+        'Hata', 
+        `Telefon arama işlemi başarısız oldu.\n\nNumara panoya kopyalandı: ${phoneNumber}`,
+        [{ text: 'Tamam', style: 'default' }]
+      );
+    }
   };
 
-  const sendEmail = (email) => {
-    Linking.openURL(`mailto:${email}`);
+  const sendEmail = async (email) => {
+    try {
+      const url = `mailto:${email}`;
+      console.log('E-posta URL:', url);
+      
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        console.log('E-posta uygulaması açılamadı');
+        // E-posta adresini panoya kopyala
+        Clipboard.setString(email);
+        Alert.alert(
+          'E-posta Uygulaması Bulunamadı', 
+          `E-posta adresi panoya kopyalandı: ${email}\n\nE-posta uygulamanızı manuel olarak açabilirsiniz.`,
+          [{ text: 'Tamam', style: 'default' }]
+        );
+      }
+    } catch (error) {
+      console.error('E-posta gönderme hatası:', error);
+      Clipboard.setString(email);
+      Alert.alert(
+        'Hata', 
+        `E-posta gönderme işlemi başarısız oldu.\n\nE-posta adresi panoya kopyalandı: ${email}`,
+        [{ text: 'Tamam', style: 'default' }]
+      );
+    }
   };
 
   const openWhatsApp = (phoneNumber) => {
-    Linking.openURL(`whatsapp://send?phone=${phoneNumber}`);
+    // WhatsApp için telefon numarasını temizle ve formatla
+    const cleanNumber = phoneNumber.replace(/\s/g, '').replace('+90', '90');
+    Linking.openURL(`whatsapp://send?phone=${cleanNumber}`);
   };
 
   const openMaps = () => {
@@ -91,15 +145,7 @@ const ContactScreen = ({ navigation }) => {
         {/* Address Card */}
         <TouchableOpacity 
           style={styles.contactCard}
-          onPress={() => navigation.navigate('Map', {
-            spot: {
-              ad: 'Tire Belediyesi',
-              aciklama: 'Tire Belediyesi merkez binası',
-              enlem: 38.0931,
-              boylam: 27.7519,
-              kategori: 'belediye'
-            }
-          })}
+          onPress={openMaps}
           activeOpacity={0.7}
         >
           <View style={styles.cardIconContainer}>
@@ -122,7 +168,7 @@ const ContactScreen = ({ navigation }) => {
             <Icon name="chat" size={24} color="#1976D2" />
           </View>
           <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>WhatsApp</Text>
+            <Text style={styles.cardTitle}>WhatsApp İhbar</Text>
             <Text style={styles.cardValue}>{contactInfo.whatsapp}</Text>
             <Text style={styles.cardDescription}>7/24 WhatsApp destek hattı</Text>
           </View>

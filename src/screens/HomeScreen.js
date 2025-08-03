@@ -1,13 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const HomeScreen = ({ navigation }) => {
   const municipality = "Tire Belediyesi";
-  const weather = {
+  const [weather, setWeather] = useState({
     location: "Şehir Merkezi",
     temperature: null,
-    status: "Hava durumu alınamadı"
+    status: "Hava durumu yükleniyor..."
+  });
+
+  useEffect(() => {
+    fetchWeatherData();
+  }, []);
+
+  const fetchWeatherData = async () => {
+    try {
+      const API_KEY = '0bbf76040ca295b36ed45c2d66937050';
+      const city = 'Tire';
+      const country = 'TR';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}&units=metric&lang=tr`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setWeather({
+          location: "Tire",
+          temperature: Math.round(data.main.temp),
+          status: data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)
+        });
+      } else {
+        setWeather({
+          location: "Şehir Merkezi",
+          temperature: null,
+          status: "Hava durumu alınamadı"
+        });
+      }
+    } catch (error) {
+      console.error('Hava durumu verisi alınamadı:', error);
+      setWeather({
+        location: "Şehir Merkezi",
+        temperature: null,
+        status: "Bağlantı hatası"
+      });
+    }
   };
   const shortcuts = [
     { title: "Nasıl Gelinir", icon: 'directions', color: '#4CAF50', onPress: () => navigation.navigate('HowToGetThere') },
@@ -33,7 +70,11 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView style={styles.scrollView}>
         {/* Karşılama Alanı */}
         <View style={styles.header}>
-          <Image source={require('../../assets/logo.png')} style={styles.logo} />
+          <Image 
+            source={require('../../assets/logo.png')} 
+            style={styles.logo}
+            resizeMode="cover"
+          />
           <Text style={styles.headerText}>{municipality}ne{"\n"}Hoşgeldiniz</Text>
         </View>
 
@@ -55,9 +96,9 @@ const HomeScreen = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      {/* Tanıtım Görseli - Camii */}
+      {/* Tanıtım Görseli - Tire Manzara */}
       <Image 
-        source={{ uri: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80' }} 
+        source={{ uri: 'https://sfulbvzijpvrkbqzadtl.supabase.co/storage/v1/object/public/image//tire_manzara.jpeg' }} 
         style={styles.promoImage} 
         resizeMode="cover"
         onError={(error) => console.log('Image loading error:', error)}
@@ -97,15 +138,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4
   },
   logo: { 
-    width: 48, 
-    height: 48, 
-    borderRadius: 24, 
+    width: 56, 
+    height: 56, 
+    borderRadius: 28, 
     marginRight: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+    borderWidth: 0,
+    borderColor: 'transparent',
+    padding: 0,
+    margin: 0
   },
   headerText: { 
     color: 'white', 

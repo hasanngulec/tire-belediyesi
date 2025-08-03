@@ -11,10 +11,10 @@ import {
 
 const MayorMessageScreen = () => {
   const data = {
-    name: "Ahmet YILMAZ",
+    name: "Hayati OKUROĞLU",
     title: "Tire Belediye Başkanı",
-    photo: "https://via.placeholder.com/100",
-                    message: "Sevgili Tire Belediyesi sakinleri, bu modern mobil uygulamamız ile...",
+    photo: "https://sfulbvzijpvrkbqzadtl.supabase.co/storage/v1/object/public/image//belediye_baskani.jpeg",
+    message: "Sevgili Tire Belediyesi sakinleri, bu modern mobil uygulamamız ile...",
     phone: "(0312) 555 0123",
     email: "baskan@xbelediyesi.gov.tr"
   };
