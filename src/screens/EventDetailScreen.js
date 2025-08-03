@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   ScrollView,
@@ -8,13 +8,87 @@ import {
   TouchableOpacity,
   Linking,
   Dimensions,
+  Alert,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as Calendar from 'expo-calendar';
 
 const { width } = Dimensions.get('window');
 
 const EventDetailScreen = ({ route, navigation }) => {
   const { event } = route.params;
+  const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
+
+  const requestCalendarPermission = async () => {
+    try {
+      const { status } = await Calendar.requestCalendarPermissionsAsync();
+      return status === 'granted';
+    } catch (error) {
+      console.error('Takvim izni hatası:', error);
+      return false;
+    }
+  };
+
+  const addEventToCalendar = async () => {
+    try {
+      setIsAddingToCalendar(true);
+      
+      const hasPermission = await requestCalendarPermission();
+      if (!hasPermission) {
+        Alert.alert(
+          'İzin Gerekli',
+          'Etkinliği takviminize eklemek için takvim izni gereklidir.',
+          [{ text: 'Tamam' }]
+        );
+        return;
+      }
+
+      // Etkinlik tarihini parse et
+      const eventDate = new Date(event.tarih);
+      const startDate = new Date(eventDate);
+      startDate.setHours(10, 0, 0, 0); // Sabah 10:00'da başlasın
+      const endDate = new Date(startDate);
+      endDate.setHours(12, 0, 0, 0); // 2 saat sürsün
+
+      // Varsayılan takvimi al
+      const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+      const defaultCalendar = calendars.find(calendar => calendar.isPrimary) || calendars[0];
+
+      if (!defaultCalendar) {
+        Alert.alert('Hata', 'Takvim bulunamadı.');
+        return;
+      }
+
+      const eventDetails = {
+        title: event.ad,
+        startDate: startDate,
+        endDate: endDate,
+        location: event.adres,
+        notes: event.aciklama,
+        timeZone: 'Europe/Istanbul',
+        calendarId: defaultCalendar.id,
+      };
+
+      const eventId = await Calendar.createEventAsync(defaultCalendar.id, eventDetails);
+      
+      Alert.alert(
+        'Başarılı!',
+        'Etkinlik takviminize eklendi.',
+        [{ text: 'Tamam' }]
+      );
+      
+    } catch (error) {
+      console.error('Takvim ekleme hatası:', error);
+      Alert.alert(
+        'Hata',
+        'Etkinlik takviminize eklenirken bir hata oluştu.',
+        [{ text: 'Tamam' }]
+      );
+    } finally {
+      setIsAddingToCalendar(false);
+    }
+  };
 
   const openMaps = () => {
     if (event.enlem && event.boylam) {
@@ -82,8 +156,15 @@ const EventDetailScreen = ({ route, navigation }) => {
               <Text style={styles.infoLabel}>Tarih</Text>
               <Text style={styles.infoValue}>{formatDate(event.tarih)}</Text>
             </View>
-            <TouchableOpacity style={styles.reminderButton} activeOpacity={0.7}>
-              <Text style={styles.reminderButtonText}>Bana Hatırlat</Text>
+            <TouchableOpacity 
+              style={[styles.reminderButton, isAddingToCalendar && styles.reminderButtonDisabled]} 
+              onPress={addEventToCalendar}
+              activeOpacity={0.7}
+              disabled={isAddingToCalendar}
+            >
+              <Text style={styles.reminderButtonText}>
+                {isAddingToCalendar ? 'Ekleniyor...' : 'Bana Hatırlat'}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -224,6 +305,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
+  },
+  reminderButtonDisabled: {
+    backgroundColor: '#ccc',
   },
   reminderButtonText: {
     color: 'white',
