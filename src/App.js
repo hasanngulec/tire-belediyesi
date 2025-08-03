@@ -45,8 +45,9 @@ function HomeStackNavigator() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        headerBackTitle: '',
       }}>
-      <Stack.Screen name="Ana Sayfa" component={HomeScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MayorMessage" component={MayorMessageScreen} options={{ title: 'Başkanın Mesajı' }} />
       <Stack.Screen name="Emergency" component={EmergencyScreen} options={{ title: 'Acil Durumlar' }} />
       <Stack.Screen name="DutyPharmacies" component={DutyPharmaciesScreen} options={{ title: 'Nöbetçi Eczaneler' }} />
@@ -70,8 +71,9 @@ function EventsStackNavigator() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        headerBackTitle: '',
       }}>
-      <Stack.Screen name="EventsList" component={EventsScreen} options={{ title: 'Etkinlikler' }} />
+      <Stack.Screen name="EventsList" component={EventsScreen} options={{ headerShown: false }} />
       <Stack.Screen name="EventDetail" component={EventDetailScreen} options={{ title: 'Etkinlik Detayı' }} />
     </Stack.Navigator>
   );
@@ -89,8 +91,9 @@ function TourismStackNavigator() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        headerBackTitle: '',
       }}>
-      <Stack.Screen name="TourismSpots" component={TourismScreen} options={{ title: 'Gezi Noktaları' }} />
+      <Stack.Screen name="TourismSpots" component={TourismScreen} options={{ headerShown: false }} />
       <Stack.Screen name="TourismSpotDetail" component={TourismSpotDetailScreen} options={{ title: 'Gezi Noktası Detayı' }} />
       <Stack.Screen name="TravelRoutes" component={TravelRoutesScreen} options={{ title: 'Gezi Rotaları' }} />
       <Stack.Screen name="HowToGetThere" component={HowToGetThereScreen} options={{ title: 'Nasıl Gelinir' }} />
@@ -111,8 +114,9 @@ function MapStackNavigator() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        headerBackTitle: '',
       }}>
-      <Stack.Screen name="MapView" component={MapScreen} options={{ title: 'Harita' }} />
+      <Stack.Screen name="MapView" component={MapScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

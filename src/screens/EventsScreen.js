@@ -9,6 +9,7 @@ import {
   RefreshControl,
   FlatList,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { supabase } from '../config/supabase';
@@ -150,7 +151,7 @@ const EventsScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Etkinlikler</Text>
@@ -169,7 +170,7 @@ const EventsScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -147,15 +148,15 @@ export default function MapScreen({ navigation, route }) {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#2E5266" />
         <Text style={styles.loadingText}>Harita yükleniyor...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Kategori Filtreleri */}
       <View style={styles.categoryContainer}>
         <View style={styles.categoryScroll}>
@@ -263,7 +264,7 @@ export default function MapScreen({ navigation, route }) {
           ))}
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

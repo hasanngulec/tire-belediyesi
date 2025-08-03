@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const HomeScreen = ({ navigation }) => {
@@ -24,12 +24,13 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Karşılama Alanı */}
-      <View style={styles.header}>
-        <View style={styles.logo} />
-        <Text style={styles.headerText}>{municipality}ne{"\n"}Hoşgeldiniz</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        {/* Karşılama Alanı */}
+        <View style={styles.header}>
+          <View style={styles.logo} />
+          <Text style={styles.headerText}>{municipality}ne{"\n"}Hoşgeldiniz</Text>
+        </View>
 
       {/* Hava Durumu */}
       <View style={styles.weatherCard}>
@@ -65,7 +66,8 @@ const HomeScreen = ({ navigation }) => {
           {about.description}
         </Text>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
