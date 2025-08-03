@@ -183,18 +183,7 @@ const EventDetailScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Action Buttons */}
-        <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8}>
-            <Icon name="favorite" size={22} color="white" />
-            <Text style={styles.primaryButtonText}>Favorilere Ekle</Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.8}>
-            <Icon name="share" size={22} color="#1976D2" />
-            <Text style={styles.secondaryButtonText}>Paylaş</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     </ScrollView>
   );

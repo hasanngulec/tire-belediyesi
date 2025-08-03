@@ -43,10 +43,7 @@ const TravelRoutesScreen = ({ navigation }) => {
     <View style={styles.routeCard}>
       <Text style={styles.routeName}>{item.name}</Text>
       <Text style={styles.routeDescription}>{item.description}</Text>
-      <View style={styles.routeDetails}>
-        <Text style={[styles.difficultyChip, { backgroundColor: item.color }]}>{item.difficulty}</Text>
-        <Text style={styles.routeInfo}>{item.duration} • {item.distance}</Text>
-      </View>
+
       <View style={styles.stopsContainer}>
         {item.stops.map((stop, index) => (
           <Text key={index} style={styles.stopChip}>{stop}</Text>

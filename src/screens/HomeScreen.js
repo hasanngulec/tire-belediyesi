@@ -28,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView>
         {/* Karşılama Alanı */}
         <View style={styles.header}>
-          <View style={styles.logo} />
+          <Image source={require('../../assets/logo.png')} style={styles.logo} />
           <Text style={styles.headerText}>{municipality}ne{"\n"}Hoşgeldiniz</Text>
         </View>
 
@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     width: 48, 
     height: 48, 
     borderRadius: 24, 
-    backgroundColor: 'white', 
     marginRight: 16,
     elevation: 2,
     shadowColor: '#000',
