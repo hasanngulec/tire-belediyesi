@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const HomeScreen = ({ navigation }) => {
@@ -25,7 +25,12 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <StatusBar 
+        backgroundColor="#2E5266" 
+        barStyle="light-content" 
+        translucent={false}
+      />
+      <ScrollView style={styles.scrollView}>
         {/* Karşılama Alanı */}
         <View style={styles.header}>
           <Image source={require('../../assets/logo.png')} style={styles.logo} />
@@ -74,7 +79,11 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#f8f9fa' 
+    backgroundColor: '#2E5266' 
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
   },
   header: { 
     flexDirection: 'row', 

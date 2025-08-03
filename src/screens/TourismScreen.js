@@ -149,11 +149,6 @@ const TourismScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Gezi Noktaları</Text>
-      </View>
-
       {/* Category Tabs */}
       <View style={styles.categoryTabsContainer}>
         {categories.map((category) => (

@@ -152,11 +152,6 @@ const EventsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Etkinlikler</Text>
-      </View>
-
       {/* Events List */}
       <FlatList
         data={etkinlikler}
