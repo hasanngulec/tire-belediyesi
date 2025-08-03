@@ -69,46 +69,18 @@ const InfluencerRoutesScreen = () => {
         <Text style={styles.tipsText}>Her influencer'ın kendi deneyimlerine dayalı özel tavsiyeleri var...</Text>
       </View>
 
-      {/* Influencer Profile */}
-      <View style={styles.influencerCard}>
-        <View style={styles.profileSection}>
-          <Image source={{ uri: data.influencer.image }} style={styles.profileImage} />
-          <View style={styles.profileInfo}>
-            <Text style={styles.influencerName}>{data.influencer.name}</Text>
-            <Text style={styles.username}>{data.influencer.username}</Text>
-            <Text style={styles.followers}>{data.influencer.followers}</Text>
-            <View style={styles.categoryChip}>
-              <Text style={styles.categoryText}>{data.influencer.category}</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.followButton}>
-            <Text style={styles.followButtonText}>Takip Et</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+
 
       {/* Route Details */}
       <View style={styles.routeCard}>
         <Text style={styles.routeTitle}>{data.route.title}</Text>
         <Text style={styles.routeDescription}>{data.route.description}</Text>
         
-        <View style={styles.routeInfo}>
-          <Text style={styles.routeDuration}>{data.route.duration} • {data.route.distance}</Text>
-          <View style={styles.difficultyChip}>
-            <Text style={styles.difficultyText}>{data.route.difficulty}</Text>
-          </View>
-        </View>
 
-        <View style={styles.ratingContainer}>
-          <View style={styles.starsContainer}>
-            {renderStars(data.route.rating)}
-          </View>
-          <Text style={styles.ratingText}>{data.route.rating}</Text>
-        </View>
 
         {/* Highlights */}
         <View style={styles.highlightsSection}>
-          <Text style={styles.sectionTitle}>Öne Çıkanlar</Text>
+          <Text style={styles.sectionTitle}>Rotadaki Duraklar</Text>
           {data.route.highlights.map((highlight, index) => (
             <View key={index} style={styles.highlightItem}>
               <Icon name="check-circle" size={16} color="#4CAF50" />
@@ -119,7 +91,7 @@ const InfluencerRoutesScreen = () => {
 
         {/* Tips */}
         <View style={styles.tipsSection}>
-          <Text style={styles.sectionTitle}>{data.influencer.name}'in Tavsiyeleri</Text>
+          <Text style={styles.sectionTitle}>Tavsiyeler</Text>
           {data.route.tips.map((tip, index) => (
             <View key={index} style={styles.tipBox}>
               <Text style={styles.tipText}>{tip}</Text>
@@ -129,7 +101,7 @@ const InfluencerRoutesScreen = () => {
 
         {/* Start Route Button */}
         <TouchableOpacity style={styles.startRouteButton}>
-          <Text style={styles.startRouteButtonText}>Rotayı Başlat</Text>
+          <Text style={styles.startRouteButtonText}>Rotayı Keşfet</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

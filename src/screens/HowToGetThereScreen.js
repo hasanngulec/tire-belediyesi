@@ -159,18 +159,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   transportationType: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#2E5266',
     marginTop: 8,
   },
   transportationDescription: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#666',
     marginVertical: 8,
   },
   transportationDetail: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#999',
   },
 });

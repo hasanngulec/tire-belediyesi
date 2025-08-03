@@ -62,7 +62,7 @@ const TravelRoutesScreen = ({ navigation }) => {
             }
           })}
         >
-          <Text style={styles.mapButtonText}>Rotaya Git</Text>
+          <Text style={styles.mapButtonText}>Rotayı Keşfet</Text>
         </TouchableOpacity>
       </View>
     </View>
