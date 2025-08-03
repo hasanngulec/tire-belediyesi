@@ -46,6 +46,7 @@ function HomeStackNavigator() {
           fontWeight: 'bold',
         },
         headerBackTitle: '',
+        headerBackTitleVisible: false,
       }}>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MayorMessage" component={MayorMessageScreen} options={{ title: 'Başkanın Mesajı' }} />
@@ -72,6 +73,7 @@ function EventsStackNavigator() {
           fontWeight: 'bold',
         },
         headerBackTitle: '',
+        headerBackTitleVisible: false,
       }}>
       <Stack.Screen name="EventsList" component={EventsScreen} options={{ headerShown: false }} />
       <Stack.Screen name="EventDetail" component={EventDetailScreen} options={{ title: 'Etkinlik Detayı' }} />
@@ -92,6 +94,7 @@ function TourismStackNavigator() {
           fontWeight: 'bold',
         },
         headerBackTitle: '',
+        headerBackTitleVisible: false,
       }}>
       <Stack.Screen name="TourismSpots" component={TourismScreen} options={{ headerShown: false }} />
       <Stack.Screen name="TourismSpotDetail" component={TourismSpotDetailScreen} options={{ title: 'Gezi Noktası Detayı' }} />
@@ -115,6 +118,7 @@ function MapStackNavigator() {
           fontWeight: 'bold',
         },
         headerBackTitle: '',
+        headerBackTitleVisible: false,
       }}>
       <Stack.Screen name="MapView" component={MapScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
