@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Linking, Alert, Clipboard } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ContactScreen = ({ navigation }) => {
@@ -40,22 +40,9 @@ const ContactScreen = ({ navigation }) => {
         await Linking.openURL(url);
       } else {
         console.log('Telefon uygulaması açılamadı');
-        // Numarayı panoya kopyala
-        Clipboard.setString(cleanNumber);
-        Alert.alert(
-          'Telefon Uygulaması Bulunamadı', 
-          `Telefon numarası panoya kopyalandı: ${cleanNumber}\n\nNumarayı manuel olarak arayabilirsiniz.`,
-          [{ text: 'Tamam', style: 'default' }]
-        );
       }
     } catch (error) {
       console.error('Telefon arama hatası:', error);
-      Clipboard.setString(phoneNumber);
-      Alert.alert(
-        'Hata', 
-        `Telefon arama işlemi başarısız oldu.\n\nNumara panoya kopyalandı: ${phoneNumber}`,
-        [{ text: 'Tamam', style: 'default' }]
-      );
     }
   };
 
@@ -69,22 +56,9 @@ const ContactScreen = ({ navigation }) => {
         await Linking.openURL(url);
       } else {
         console.log('E-posta uygulaması açılamadı');
-        // E-posta adresini panoya kopyala
-        Clipboard.setString(email);
-        Alert.alert(
-          'E-posta Uygulaması Bulunamadı', 
-          `E-posta adresi panoya kopyalandı: ${email}\n\nE-posta uygulamanızı manuel olarak açabilirsiniz.`,
-          [{ text: 'Tamam', style: 'default' }]
-        );
       }
     } catch (error) {
       console.error('E-posta gönderme hatası:', error);
-      Clipboard.setString(email);
-      Alert.alert(
-        'Hata', 
-        `E-posta gönderme işlemi başarısız oldu.\n\nE-posta adresi panoya kopyalandı: ${email}`,
-        [{ text: 'Tamam', style: 'default' }]
-      );
     }
   };
 
