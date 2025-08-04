@@ -23,7 +23,14 @@
         "NSCameraUsageDescription": "Bu uygulama kamera erişimi talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
         "NSLocationWhenInUseUsageDescription": "Bu uygulama harita üzerinde konumunuzu göstermek için konum bilgisine ihtiyaç duyar.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Bu uygulama harita üzerinde konumunuzu göstermek için konum bilgisine ihtiyaç duyar.",
-        "NSCalendarsUsageDescription": "Bu uygulama etkinlikleri takviminize eklemek için takvim erişimi talep eder."
+        "NSCalendarsUsageDescription": "Bu uygulama etkinlikleri takviminize eklemek için takvim erişimi talep eder.",
+        "NSContactsUsageDescription": "Bu uygulama kişilerinize erişim talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
+        "NSMicrophoneUsageDescription": "Bu uygulama mikrofon erişimi talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
+        "NSBluetoothAlwaysUsageDescription": "Bu uygulama Bluetooth erişimi talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
+        "NSBluetoothPeripheralUsageDescription": "Bu uygulama Bluetooth erişimi talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
+        "NSFaceIDUsageDescription": "Bu uygulama Face ID erişimi talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
+        "NSLocalNetworkUsageDescription": "Bu uygulama yerel ağ erişimi talep etmez. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır.",
+        "NSUserTrackingUsageDescription": "Bu uygulama kullanıcı takibi yapmaz. Bu izin, kullanılan kütüphaneler tarafından gerekli kılınmaktadır."
       }
     },
     "android": {
