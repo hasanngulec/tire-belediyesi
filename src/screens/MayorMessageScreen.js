@@ -15,8 +15,8 @@ const MayorMessageScreen = () => {
     title: "Tire Belediye Başkanı",
     photo: "https://sfulbvzijpvrkbqzadtl.supabase.co/storage/v1/object/public/image//belediye_baskani.jpeg",
     message: "Sevgili Tire Belediyesi sakinleri, bu modern mobil uygulamamız ile...",
-    phone: "(0312) 555 0123",
-    email: "baskan@xbelediyesi.gov.tr"
+    phone: "444 3 503",
+    email: "tirebel@tire.bel.tr"
   };
 
   const openEmail = () => {

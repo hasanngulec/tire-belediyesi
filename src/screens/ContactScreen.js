@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ContactScreen = ({ navigation }) => {
   const contactInfo = {
-    phone: "4443503",
+    phone: "444 3 503",
     email: "tirebel@tire.bel.tr",
     address: "29 EKİM CAD. CUMHURİYET MAH. NO:19 35900 İZMİR/TİRE",
     whatsapp: "+90 444 35 03"

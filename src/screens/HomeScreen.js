@@ -71,7 +71,7 @@ const HomeScreen = ({ navigation }) => {
         {/* Karşılama Alanı */}
         <View style={styles.header}>
           <Image 
-            source={require('../../assets/logo.png')} 
+            source={{ uri: 'https://sfulbvzijpvrkbqzadtl.supabase.co/storage/v1/object/public/image//tiretire.png' }} 
             style={styles.logo}
             resizeMode="cover"
           />
