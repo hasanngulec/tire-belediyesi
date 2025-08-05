@@ -56,8 +56,6 @@ function HomeStackNavigator() {
       <Stack.Screen name="DutyPharmacies" component={DutyPharmaciesScreen} options={{ title: 'Nöbetçi Eczaneler' }} />
       <Stack.Screen name="Contact" component={ContactScreen} options={{ title: 'Bize Ulaşın' }} />
       <Stack.Screen name="HowToGetThere" component={HowToGetThereScreen} options={{ title: 'Nasıl Gelinir' }} />
-      <Stack.Screen name="TravelRoutes" component={TravelRoutesScreen} options={{ title: 'Gezi Rotaları' }} />
-      <Stack.Screen name="InfluencerRoutes" component={InfluencerRoutesScreen} options={{ title: 'Influencer Rota Önerileri' }} />
     </Stack.Navigator>
   );
 }
@@ -105,7 +103,6 @@ function TourismStackNavigator() {
       <Stack.Screen name="TourismSpots" component={TourismScreen} options={{ title: 'Gezi Noktaları' }} />
       <Stack.Screen name="TourismSpotDetail" component={TourismSpotDetailScreen} options={{ title: 'Gezi Noktası Detayı' }} />
       <Stack.Screen name="TravelRoutes" component={TravelRoutesScreen} options={{ title: 'Gezi Rotaları' }} />
-      <Stack.Screen name="HowToGetThere" component={HowToGetThereScreen} options={{ title: 'Nasıl Gelinir' }} />
       <Stack.Screen name="InfluencerRoutes" component={InfluencerRoutesScreen} options={{ title: 'Influencer Rota Önerileri' }} />
     </Stack.Navigator>
   );
